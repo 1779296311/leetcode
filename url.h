@@ -1,0 +1,257 @@
+/*********************************************
+*     ------------------------
+*     ------------------------
+*     file name: url.h
+*     author   : @ JY
+*     date     : 2020--03--13
+**********************************************/
+const int hSIZE = 6;
+#include <iostream>
+using namespace std;
+
+int hash1(const char *key, int size, int limit){
+    int __res = size;
+    char *k   = (char*) key;
+    while(*k){
+        __res = (__res<<4)^(__res>>28)^(*k);
+        ++k;
+    }
+    return  __res>0?(__res%limit):(__res%limit+limit);
+}
+int hash2(const char *key, int size, int limit){
+    int __res = size;
+    char *k   = (char*) key;
+    while(*k){
+        __res = __res + *k;
+        __res = __res + (__res<<10);
+        __res = __res ^(__res>>6);
+        ++k;
+    }
+    return  __res>0?(__res%limit):(__res%limit+limit);
+}
+int hash3(const char *key, int size, int limit){
+    int __res = size;
+    char *k   = (char*) key;
+    while(*k){
+        __res ^= *k + ((__res<<6)+(__res>>16)) - __res;
+        ++k;
+    }
+    return  __res>0?(__res%limit):(__res%limit+limit);
+
+}
+int hash4(const char *key, int size, int limit){
+    int __res = 0;
+    char *k   = (char*) key;
+    while(*k){
+        __res = 33*__res+*k;
+        ++k;
+    }
+    return  __res>0?(__res%limit):(__res%limit+limit);
+}
+int hash5(const char *key, int size, int limit){
+    const int p = 1677619;
+    int __res   = (int)2166136261L;
+    char *k     = (char*) key;
+    while(*k){
+        __res = (__res^*k)*p;
+        ++k;
+    }
+    __res += __res << 13;
+    __res ^= __res >> 7;
+    __res += __res << 3;
+    __res ^= __res >> 17;
+    __res += __res << 5;
+    return  __res>0?(__res%limit):(__res%limit+limit);
+}
+int hash6(const char *key, int size, int limit){
+    int __res = 0;
+    char *k   = (char*)key;
+    while(*k){
+       __res=((__res<<2)+(*k>>4))^(*k<<10);
+       ++k;
+    }
+    __res = __res % limit;
+    return  __res>0?(__res%limit):(__res%limit+limit);
+}
+typedef int(*HF[])(const char*,int,int);
+HF     Hfun  = {hash1,hash2,hash3,hash4,hash5,hash6};
+
+const char* url[]  = {"http://sc.111ttt.com/up/mp3/298497/0E20F854109D276944A2F04F7A8EA067.mp3",
+"http://sc.111ttt.com/up/mp3/298496/F801762DB8ACC43604FA4B0545021E51.mp3",
+"http://sc.111ttt.com/up/mp3/298494/F26E2036A8C719384BC0BE09515E6BA2.mp3",
+"http://sc.111ttt.com/up/mp3/298493/9176BFC719206DA56B8318DC44858528.mp3",
+"http://sc.111ttt.com/up/mp3/298492/874527121B2DEDA9BAD276FD0EC7DAA8.mp3",
+"http://sc.111ttt.com/up/mp3/298491/58AF4E7B8A0A15F0322D4201A81DD737.mp3",
+"http://sc.111ttt.com/up/mp3/298490/F4739854470A1E04DD7CAAF7DCCB003F.mp3",
+"http://sc.111ttt.com/up/mp3/298489/C9E91AFE309D39B9AAC16E122A3C4305.mp3",
+"http://sc.111ttt.com/up/mp3/298488/7D9B58F88AD7B8AD86845D7762099B83.mp3",
+"http://sc.111ttt.com/up/mp3/298487/EE9685CE84DF29F38926B2375F2783D5.mp3",
+"http://sc.111ttt.com/up/mp3/298485/6EBE2B41CF7E233932E1E64D0180537A.mp3",
+"http://sc.111ttt.com/up/mp3/298483/FD3D89BAA44B262C2E2FE49C665860E5.mp3",
+"http://sc.111ttt.com/up/mp3/298482/D9582D0D158B9A2283CAD537166D4045.mp3",
+"http://sc.111ttt.com/up/mp3/298480/C65985258DF623A4C70376533C651515.mp3",
+"http://sc.111ttt.com/up/mp3/298479/BE43D0B374C77C8A2C270A7CCCBF69F9.mp3",
+"http://sc.111ttt.com/up/mp3/298478/3423621DB01B7D3FF22CFEC5748F959F.mp3",
+"http://sc.111ttt.com/up/mp3/298477/5828D7B67EECC4C5393F3ACF2B0CE028.mp3",
+"http://sc.111ttt.com/up/mp3/298476/81DF742AA8E5EB8988EE58A7E25118A0.mp3",
+"http://sc.111ttt.com/up/mp3/298475/9F096FD930CF273442413FC942F4F7FD.mp3",
+"http://sc.111ttt.com/up/mp3/298473/7426EC17DF5D2F85A9B7572653FA0DBE.mp3",
+"http://sc.111ttt.com/up/mp3/298472/29D8908749B503EA726795AB48F21F3C.mp3",
+"http://sc.111ttt.com/up/mp3/298471/0890647FB01173E3A81B6BA8876794AC.mp3",
+"http://sc.111ttt.com/up/mp3/298470/1808B62BA8CE17238C2EC16FBB33C359.mp3",
+"http://sc.111ttt.com/up/mp3/298469/08E682156D5D5CE9348DDB41B853F4B9.mp3",
+"http://sc.111ttt.com/up/mp3/298468/6CE90A59A057955F2E4CFEABDC8690E3.mp3",
+"http://sc.111ttt.com/up/mp3/298467/D7265CED5FEAC861353DBF0CCDA7C115.mp3",
+"http://sc.111ttt.com/up/mp3/298466/4998D49D72D5C24BCFD8D9D33A175AFC.mp3",
+"http://sc.111ttt.com/up/mp3/298465/63D9EF49FB3C307ECF3CC040A5FD6C50.mp3",
+"http://sc.111ttt.com/up/mp3/298464/0992C11C2C1B5E6FF39C6A0D435612A0.mp3",
+"http://sc.111ttt.com/up/mp3/298463/014FDD75A1470C00221191EFAD55F3F8.mp3",
+"http://sc.111ttt.com/up/mp3/298462/3297C6217BB2FD5BDA34423489787C00.mp3",
+"http://sc.111ttt.com/up/mp3/298461/A2BF4E198EB7ADE0BACF1E4E0CB4C877.mp3",
+"http://sc.111ttt.com/up/mp3/298460/8683943D6A0A9BDB29D8D21C797E8D95.mp3",
+"http://sc.111ttt.com/up/mp3/298459/C3AFD97688DDA2B8FC1A25B0A4EE8E32.mp3",
+"http://sc.111ttt.com/up/mp3/298458/EDB130F288943688763357857C51F45A.mp3",
+"http://sc.111ttt.com/up/mp3/298457/A67C0D7E7D27A4BF99530B6D9710781A.mp3",
+"http://sc.111ttt.com/up/mp3/298456/2E74D46E94EED8432F8B7CACF4E11835.mp3",
+"http://sc.111ttt.com/up/mp3/298455/FEF57B49838F090EF0119FBA93A2D8A3.mp3",
+"http://sc.111ttt.com/up/mp3/298453/FA20024C29C51430F08D3494C020442E.mp3",
+"http://sc.111ttt.com/up/mp3/298452/4675E2E207D0AA7AC44A1E19BCB01543.mp3",
+"http://sc.111ttt.com/up/mp3/298451/309092CD865A0B9B60EAEE6211558D78.mp3",
+"http://sc.111ttt.com/up/mp3/298448/9815CEC7AD786F5284E985596497E4F0.mp3",
+"http://sc.111ttt.com/up/mp3/298447/928914041C4EE2B7C755C5FF70DB8E70.mp3",
+"http://sc.111ttt.com/up/mp3/298446/939E3F6D4B62FC962D9DDA3A4C40D735.mp3",
+"http://sc.111ttt.com/up/mp3/298443/D1DB50FAB418E654D7268DA37E50BD92.mp3",
+"http://sc.111ttt.com/up/mp3/298442/FB3711E4A0202C74E844E3CADAC317BB.mp3",
+"http://sc.111ttt.com/up/mp3/298441/9246CDA619B5E24F6B0979A1EAE9F109.mp3",
+"http://sc.111ttt.com/up/mp3/298439/8F61C4AFA40A482F6E92A965EDB58E4A.mp3",
+"http://sc.111ttt.com/up/mp3/298438/D66FC610FD3AF39DF5348015ACA34078.mp3",
+"http://sc.111ttt.com/up/mp3/298437/953FD8ED5D3D1FC6404E025F59622FA1.mp3",
+"http://sc.111ttt.com/up/mp3/298436/D858AA28394E9A1EA4DF907FEE4ACC85.mp3",
+"http://sc.111ttt.com/up/mp3/298435/CFD19F97FEB3148F0D689D0D6BABDFA9.mp3",
+"http://sc.111ttt.com/up/mp3/298434/588791D0441BB3789E39D3DA89EB7DBA.mp3",
+"http://sc.111ttt.com/up/mp3/298433/9B7F58995CB2EA6548929E7DAA04CE17.mp3",
+"http://sc.111ttt.com/up/mp3/298430/425C5619EA7D8DC0687446A5D94EE476.mp3",
+"http://sc.111ttt.com/up/mp3/298429/094AD3BBAFF36DD48C94906C3CA9E83B.mp3",
+"http://sc.111ttt.com/up/mp3/298428/2A33A8D8E981FA6E5F0931E92C1A39B0.mp3",
+"http://sc.111ttt.com/up/mp3/298426/CCE8331322839C6E280C8267F138B28A.mp3",
+"http://sc.111ttt.com/up/mp3/298425/C1C5A2A8CE1BEEACEC8A67DDD2C0B81E.mp3",
+"http://sc.111ttt.com/up/mp3/298424/0143ED1E507D3512D187140DB3892099.mp3",
+"http://sc.111ttt.com/up/mp3/298423/65FF303160497B50EF615FAEE3458A7C.mp3",
+"http://sc.111ttt.com/up/mp3/298422/FF4FB06C44A773027F4E86CA50B871B4.mp3",
+"http://sc.111ttt.com/up/mp3/298421/E5B87D7D14CEFCE9FCBAB89D84D6A871.mp3",
+"http://sc.111ttt.com/up/mp3/298420/4CD85AAA41B15EE441D0BF938B3F0FBC.mp3",
+"http://sc.111ttt.com/up/mp3/298419/EAF6B297A8096144EC5D5197D2D94673.mp3",
+"http://sc.111ttt.com/up/mp3/298418/0DDBD7A7D578EA8FFA466CC7083DA143.mp3",
+"http://sc.111ttt.com/up/mp3/298417/4FB8873AB214EDB0FD00A9712A2A412C.mp3",
+"http://sc.111ttt.com/up/mp3/298416/F6CC98C6713F075A1E867A24EFE8A483.mp3",
+"http://sc.111ttt.com/up/mp3/298415/71713E5C1A320B66C0899057A06A1AA0.mp3",
+"http://sc.111ttt.com/up/mp3/298414/92DECE8B162C17B9BCBE69B1936AEB2D.mp3",
+"http://sc.111ttt.com/up/mp3/298413/1B30AA5D73FB13263C7801633DA8E98D.mp3",
+"http://sc.111ttt.com/up/mp3/298412/B2D1214B92337AA4692F14FF66E7A133.mp3",
+"http://sc.111ttt.com/up/mp3/298411/A12415DE2427619D3031F5DB1135986B.mp3",
+"http://sc.111ttt.com/up/mp3/298410/FF0205387F92C6121D1791CCFC20B1B1.mp3",
+"http://sc.111ttt.com/up/mp3/298409/5B69C112FC1BF28EAFA511E76AD3DD35.mp3",
+"http://sc.111ttt.com/up/mp3/298408/C3EDF2CAF75588AE9DED969BBBC42835.mp3",
+"http://sc.111ttt.com/up/mp3/298407/5B4194FCC806227B61CFE1E48621093E.mp3",
+"http://sc.111ttt.com/up/mp3/298406/BFDC6E4A0FFE62B798E5613F29D554A8.mp3",
+"http://sc.111ttt.com/up/mp3/298405/EDA89BC79C4E6D449C5F5BD4C320D0D9.mp3",
+"http://sc.111ttt.com/up/mp3/298404/C283458D3B6F92E462B4A2C600B4A8DF.mp3",
+"http://sc.111ttt.com/up/mp3/298403/F932D6C6315E65ED415E10B58074D5A8.mp3",
+"http://sc.111ttt.com/up/mp3/298402/5B87250799B478BC0D6DC61E2C9DF7F9.mp3",
+"http://sc.111ttt.com/up/mp3/298401/E974444DEFAA478436248B311664CE02.mp3",
+"http://sc.111ttt.com/up/mp3/298400/A191E4C472302687821A96ECF0845439.mp3",
+"http://sc.111ttt.com/up/mp3/298399/7045A7BC443DF15D0FD574B2772DAB4D.mp3",
+"http://sc.111ttt.com/up/mp3/298398/1FF18D1F6F8D6DDA74E5C6F6088D7BF4.mp3",
+"http://sc.111ttt.com/up/mp3/298396/6CFA8C9E7F374B75AFB3D35E5222C207.mp3",
+"http://sc.111ttt.com/up/mp3/298395/AD825705E19B1CA53307378D99E60914.mp3",
+"http://sc.111ttt.com/up/mp3/298394/D82A5903A3029A33F76E42183969D044.mp3",
+"http://sc.111ttt.com/up/mp3/298393/8792496A4520204B9CDB016C95DADBDD.mp3",
+"http://sc.111ttt.com/up/mp3/298392/C01C0403FC486C1E1DBD668524317BDF.mp3",
+"http://sc.111ttt.com/up/mp3/298391/698F4D82FD6B3438D1D8236141BFA13A.mp3",
+"http://sc.111ttt.com/up/mp3/298390/96B91C66FE5D8B1A10F0FCE15EA91A06.mp3",
+"http://sc.111ttt.com/up/mp3/298389/5D9916A6552B2466F30C9063C3699066.mp3",
+"http://sc.111ttt.com/up/mp3/298388/3E64846AC694DBC31AEE3408E6073B22.mp3",
+"http://sc.111ttt.com/up/mp3/298387/E000A3DD42F2BD2B271FB1D78B6B5BDB.mp3",
+"http://sc.111ttt.com/up/mp3/298386/270473A0EC8D4FBA93618BAB0D2F59EC.mp3",
+"http://sc.111ttt.com/up/mp3/298385/E6ECA8AF7D0DD40F8E127386B3EB8C53.mp3",
+"http://sc.111ttt.com/up/mp3/298384/741AA5E99A72B32C67A398759494FD96.mp3",
+"http://sc.111ttt.com/up/mp3/298383/11A7270611112D8BC9BFFABC4B4A4D16.mp3",
+"http://sc.111ttt.com/up/mp3/298382/364D9EEDC7F35236C68FF918661FE21A.mp3",
+"http://sc.111ttt.com/up/mp3/298381/82B83072D1A7DA7CEF8C7C43491645FA.mp3",
+"http://sc.111ttt.com/up/mp3/298380/1FD54421E7AF3C4C953ACD2E0F3DD87A.mp3",
+"http://sc.111ttt.com/up/mp3/298379/DEDFAB8FE32D5AF4879C2F3BDD5AEC9C.mp3",
+"http://sc.111ttt.com/up/mp3/298378/DDF2BB9965B353364EEB59B2F4C7E964.mp3",
+"http://sc.111ttt.com/up/mp3/298377/058C956B93CEFD1FF5FD5A4F78BB5268.mp3",
+"http://sc.111ttt.com/up/mp3/298376/AB323DC326FFAE50D9E7DEBD0CA5DDDB.mp3",
+"http://sc.111ttt.com/up/mp3/298375/4EEE908CB2FC92D60BD97F0934DEF640.mp3",
+"http://sc.111ttt.com/up/mp3/298374/FC3E483DE1C51B3F12D3FB72EBF758BC.mp3",
+"http://sc.111ttt.com/up/mp3/298373/2E8125B0726F39B89DB40BB7D003AD28.mp3",
+"http://sc.111ttt.com/up/mp3/298371/079D2D10DCFD0660C7529D8ACE977F3C.mp3",
+"http://sc.111ttt.com/up/mp3/298370/DD32147CB86643DBC7468018F40F88FC.mp3",
+"http://sc.111ttt.com/up/mp3/298369/5698BA9B3C2E0477486C5B1DD21951A5.mp3",
+"http://sc.111ttt.com/up/mp3/298368/4C0B826839AE57B34047AF1B8ADDEE0C.mp3",
+"http://sc.111ttt.com/up/mp3/298365/66C72608E3A596DA5240F1D47A4CCC19.mp3",
+"http://sc.111ttt.com/up/mp3/298364/BB553C101813EFD9FC98DB76BD5BD23E.mp3",
+"http://sc.111ttt.com/up/mp3/298363/2A0629774B8BE05EDB11B80C2CC3829D.mp3",
+"http://sc.111ttt.com/up/mp3/298362/7B5C3A51BCFDCDC84108604E66B80A09.mp3",
+"http://sc.111ttt.com/up/mp3/298360/8A969E0B21E552614BB1DBE75EDFD060.mp3",
+"http://sc.111ttt.com/up/mp3/298359/77EE87371428046BE4AA94C85A7E85A9.mp3",
+"http://sc.111ttt.com/up/mp3/298358/C7F58F314FEAC4EEECD630B75A58664A.mp3",
+"http://sc.111ttt.com/up/mp3/298357/1DE6F467F5EEAB4A9EA1A7D705CFD092.mp3",
+"http://sc.111ttt.com/up/mp3/298356/1E845ED996FC43F5BDC504E84897EE62.mp3",
+"http://sc.111ttt.com/up/mp3/298355/3C58C87BA14B7CE6F789F409498B477E.mp3",
+"http://sc.111ttt.com/up/mp3/298354/99041D88000D1158B0CD54ECA23BF6A9.mp3",
+"http://sc.111ttt.com/up/mp3/298352/3ADEC36820D1A6B554DAF9FD2B3E9036.mp3",
+"http://sc.111ttt.com/up/mp3/298351/FCE01C682563553D499DD83431B3F098.mp3",
+"http://sc.111ttt.com/up/mp3/298350/6F7183195F692051AF0A855920D11984.mp3",
+"http://sc.111ttt.com/up/mp3/298349/7EFC43CB689C51CE2EF2D9F518C68BAB.mp3",
+"http://sc.111ttt.com/up/mp3/298348/5BEC28AE619EA4ABFB7CDFB13255D31D.mp3",
+"http://sc.111ttt.com/up/mp3/298346/D7026FBF1CCED9D9D7FD537EA437A680.mp3",
+"http://sc.111ttt.com/up/mp3/298345/D88EDEAF2F03E87702DEC32FF4D0B1CE.mp3",
+"http://sc.111ttt.com/up/mp3/298344/7D26B342F43266666709692F0E3BD8C2.mp3",
+"http://sc.111ttt.com/up/mp3/298343/5D285046F51D755F8ECA84EC3A367EC7.mp3",
+"http://sc.111ttt.com/up/mp3/298341/B1A04D8E62384CA2057F1F61DD93B1F6.mp3",
+"http://sc.111ttt.com/up/mp3/298340/B6563D2D06723B24164995A1C5E367FA.mp3",
+"http://sc.111ttt.com/up/mp3/298339/1251E64E42EF595087BC5762477FF190.mp3",
+"http://sc.111ttt.com/up/mp3/298338/14B25B5EFA63EFBF4C95FE8245CB7BED.mp3",
+"http://sc.111ttt.com/up/mp3/298337/5FAF741EDD30BAFDC45BF3F909C3332B.mp3",
+"http://sc.111ttt.com/up/mp3/298335/7A7FF5C457B73ED9BAA86EDB1CA3E239.mp3",
+"http://sc.111ttt.com/up/mp3/298334/4D1BC669E93BD1D3D529D7D620C0D3B4.mp3",
+"http://sc.111ttt.com/up/mp3/298333/1510C7AF8DCE52F82A56BA7946828066.mp3",
+"http://sc.111ttt.com/up/mp3/298332/02FF952A51B55D90F037098DE6051485.mp3",
+"http://sc.111ttt.com/up/mp3/298331/8FA3E8185225FDD3E9C88BD7EDC60B20.mp3",
+"http://sc.111ttt.com/up/mp3/298330/EA103E3F48E2FB3FEABBAE632C9F3F83.mp3",
+"http://sc.111ttt.com/up/mp3/298329/C3CBB0EF644FE978DCCD82E30506A9D4.mp3",
+"http://sc.111ttt.com/up/mp3/298328/AF4E306F29311C37168FF9981CAF55EF.mp3",
+"http://sc.111ttt.com/up/mp3/298327/EF3177A6E3EB87537D1F990ABCC2277B.mp3",
+"http://sc.111ttt.com/up/mp3/298326/07F6092FDCF56D5108566DCAD67C304F.mp3",
+"http://sc.111ttt.com/up/mp3/298325/4F96A8C7884026D2F1702F82D8771261.mp3",
+"http://sc.111ttt.com/up/mp3/298324/7E287E5B2C12DB2CB4E5BB0610D5C8BA.mp3",
+"http://sc.111ttt.com/up/mp3/298323/EBC85314D4FAE4979906862249C4CC52.mp3",
+"http://sc.111ttt.com/up/mp3/298321/3CA5541212841F7CB2780FFF2260AF0A.mp3",
+"http://sc.111ttt.com/up/mp3/298320/31E35B8E51A3AB0314E8ED2634080930.mp3",
+"http://sc.111ttt.com/up/mp3/298319/F272F1DF6DCD952D49EDFCB96684D9E7.mp3",
+"http://sc.111ttt.com/up/mp3/298318/9BC0EEAF014E7CFE86C38FC43F401863.mp3",
+"http://sc.111ttt.com/up/mp3/298317/D9816D18DFF4EC2F949958EC6E2D85B9.mp3",
+"http://sc.111ttt.com/up/mp3/298316/8CA5025372CB2137E4F8E339887DF74F.mp3",
+"http://sc.111ttt.com/up/mp3/298315/84EA4C8E4C14A2F3DF397A196938AC94.mp3",
+"http://sc.111ttt.com/up/mp3/298314/87F7645978913D67D733F607E55CA113.mp3",
+"http://sc.111ttt.com/up/mp3/298313/CD3851F9A364C5ED2DBE195D2648C0D0.mp3",
+"http://sc.111ttt.com/up/mp3/298312/4B633370353448A85F5FF96F67CAEDC4.mp3",
+"http://sc.111ttt.com/up/mp3/298311/8E092017AF511B41A330FDE1D725953E.mp3",
+"http://sc.111ttt.com/up/mp3/298310/9B36C1937EE31ADA581552FAF4306707.mp3",
+"http://sc.111ttt.com/up/mp3/298309/E3F3562488AA9E57712C88C6A4426B39.mp3",
+"http://sc.111ttt.com/up/mp3/298308/CDEDF7EDA1956316277E0960771B4931.mp3",
+"http://sc.111ttt.com/up/mp3/298307/B70F1A86B468F6F28DF4ABD1285F5FA3.mp3",
+"http://sc.111ttt.com/up/mp3/298306/26B1157C6BE235130C5195C4B7094261.mp3",
+"http://sc.111ttt.com/up/mp3/298305/7A38F8ECF45AF9ED951A568843EF27D3.mp3",
+"http://sc.111ttt.com/up/mp3/298304/EC7ACD0950875D8A44F57539D53A754D.mp3",
+"http://sc.111ttt.com/up/mp3/298302/231AFBBC66C1863AECC1CAD97D50F238.mp3",
+"http://sc.111ttt.com/up/mp3/298301/C0DC536E1A1D6720EA3E9DEBECA849FE.mp3",
+"http://sc.111ttt.com/up/mp3/298300/E4F84893480825CBD20C37757DF9B158.mp3",
+"http://sc.111ttt.com/up/mp3/298299/7E1864234344BD349CB4EEBC9F29BC78.mp3",
+"http://sc.111ttt.com/up/mp3/298298/D85B9E8997AD5229144F7E52B86756DB.mp3",
+"http://sc.111ttt.com/up/mp3/298297/546C58A03A7BE4D745B002C088D31406.mp3",
+"http://sc.111ttt.com/up/mp3/298296/10639BC080C06484D2C4A523E4B5F69A.mp3",
+"http://sc.111ttt.com/up/mp3/298294/E7F21A33BABF0356C614D97718890673.mp3",
+"http://sc.111ttt.com/up/mp3/298293/A0936E4C478AD8F2A9E24FC86072FB5B.mp3"};
