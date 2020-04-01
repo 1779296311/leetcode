@@ -20,7 +20,7 @@ class Solution{
             tree *cur    = head;
             tree *rightM = NULL;
             while(cur){
-                rightM = cur->left;
+                rightM   = cur->left;
                 if(rightM){
                     while(rightM->right && rightM->right != cur){
                         rightM = rightM->right;

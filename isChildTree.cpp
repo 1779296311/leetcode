@@ -65,19 +65,24 @@ class Solution{
             while(!st.empty()){
                 tree* tmp = st.top();
                 st.pop();
-                __res = __res + to_string(tmp->val) + '_';
-                if(!tmp->left){
-                    __res  = __res + "#_";
-                }
-                if(!tmp->right){
-                    __res  = __res + "#_";
-                }
-                if(tmp->right){
+                __res = __res + (!tmp?"#":to_string(tmp->val)) + '_';
+                if(tmp){
                     st.push(tmp->right);
-                }
-                if(tmp->left){
                     st.push(tmp->left);
                 }
+                //__res = __res + to_string(tmp->val) + '_';
+                //if(!tmp->left){
+                    //__res  = __res + "#_";
+                //}
+                //if(!tmp->right){
+                    //__res  = __res + "#_";
+                //}
+                //if(tmp->right){
+                    //st.push(tmp->right);
+                //}
+                //if(tmp->left){
+                    //st.push(tmp->left);
+                //}
             }
             return __res;
         }
@@ -117,9 +122,9 @@ class Solution{
 };
 int main(int argc,const char *argv[]){
     Solution te;
-    tree *head1        = new tree(3);
-    head1->left        = new tree(4);
-    head1->right       = new tree(1);
+    //tree *head1        = new tree(3);
+    //head1->left        = new tree(4);
+    //head1->right       = new tree(1);
     //head1->left         = new tree(3);
     //head1->left->left   = new tree(4);
     //head1->left->right  = new tree(7);
@@ -130,6 +135,7 @@ int main(int argc,const char *argv[]){
     head->left         = new tree(3);
     head->left->left   = new tree(4);
     head->left->right  = new tree(1);
+    cout<<te.string_serialize(head)<<endl;
+    //9_3_4_#_#_1_#_#_2_#_6_#_#_
     return 0;
-    te.
 }

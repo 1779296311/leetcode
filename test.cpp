@@ -43,12 +43,25 @@ using namespace std;
         //return __root;
     //}
 //};
-int main(int argc,const char *argv[]){
-    vector<int> memo(size);
-    for(int i=0; i<=9; ++i){
-        cout<<memo[i]<<endl;
-    }
-    if(1!=2){
-    }
-    return 0;
+void aaa(int p){
+    return p;
+}
+void test(int b){
+  if(b == 1) {
+    ;
+  }else if(b == 8){
+    ;
+  }else if(b == 0){
+    ;
+  }
+  return b;
+}
+int main(int argc, const char *argv[]) {
+  vector<int> memo(size);
+  for (int i = 0; i <= 9; ++i) {
+    cout << memo[i] << endl;
+  }
+  if (1 != 2) {
+  }
+  return 0;
 }
