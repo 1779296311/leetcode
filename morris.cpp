@@ -28,7 +28,7 @@ class Solution{
                     if(!rightM->right){
                         cout<<cur->val<<" ";
                         rightM->right = cur;
-                        cur = cur->left;
+                        cur           = cur->left;
                         continue;
                     }else{
                         rightM->right = NULL;
@@ -50,7 +50,7 @@ class Solution{
                     }
                     if(!rightM->right){
                         rightM->right = cur;
-                        cur = cur->left;
+                        cur           = cur->left;
                         continue;
                     }else{
                         cout<<cur->val<<" ";

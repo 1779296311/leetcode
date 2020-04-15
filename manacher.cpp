@@ -29,7 +29,7 @@ class Solution{
             int R   = 0;
             int i   = 0;
             while(i<size){
-                p[i] = R>i?(p[(mid<<1)-i],R-i):1;
+                p[i] = R>i?min(p[(mid<<1)-i],R-i):1;
                 while(i+p[i]<size && i-p[i]>=0 && s1[i+p[i]] == s1[i-p[i]]){
                     ++p[i];
                 }
@@ -66,7 +66,7 @@ class Solution{
             }
             string __res(s2);
             //mid  = mid>>1;
-            for(int k=mid-(R>>2)-2; k>=0; --k){
+            for(int k=mid-(R>>1)-1; k>=0; --k){
                 __res = __res + s2[k];
             }
             return __res;
@@ -75,7 +75,8 @@ class Solution{
 int main(int argc,const char *argv[]){
     Solution te;
     string s1 = "ab";
-    cout<<te.min_add_palindrome(s1)<<endl;
-    cout<<te.manacher(s1)<<endl;
+    string a = "aaahb";
+    cout<<te.min_add_palindrome(a)<<endl;
+    //cout<<te.manacher(s1)<<endl;
     return 0;
 }

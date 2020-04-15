@@ -45,10 +45,8 @@ class Solution{
             memo[0] = 1;
             // change for hui you chou fu
             for(int coin : coins){
-                for(int i=1; i<=amount; i++){
-                    if(i >=coin){
-                        memo[i] = memo[i] + memo[i - coin];
-                    }
+                for(int i=coin; i<=amount; i++){
+                    memo[i] = memo[i] + memo[i - coin];
                 }
             }
             return memo[amount];

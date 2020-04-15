@@ -237,7 +237,7 @@ class Solution{
         Info1 left  = max_Child_isSearchTree(head->left);
         Info1 right = max_Child_isSearchTree(head->right);
         int maxN    = 0;
-        if(head->left == left.maxSearchHead &&
+        if(head->left  == left.maxSearchHead &&
            head->right == right.maxSearchHead &&
            left.maxV<head->val && right.minV>head->val){
             maxN = left.maxNum + right.maxNum + 1;

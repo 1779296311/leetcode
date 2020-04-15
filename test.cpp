@@ -43,10 +43,10 @@ using namespace std;
         //return __root;
     //}
 //};
-void aaa(int p){
+int aaa(int p){
     return p;
 }
-void test(int b){
+int test(int b){
   if(b == 1) {
     ;
   }else if(b == 8){
@@ -57,6 +57,7 @@ void test(int b){
   return b;
 }
 int main(int argc, const char *argv[]) {
+  int size = 9;
   vector<int> memo(size);
   for (int i = 0; i <= 9; ++i) {
     cout << memo[i] << endl;

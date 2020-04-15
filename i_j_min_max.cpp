@@ -28,7 +28,7 @@ class Solution{
                         maxT.pop_back();
                     }
                     maxT.push_back(index);
-                    if(nums[maxT.front()]-nums[minT.front()]>k){
+                    if(nums[maxT.front()]-nums[minT.front()]>=k){
                         break;
                     }
                     ++index;

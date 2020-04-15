@@ -9,6 +9,7 @@
 #include <vector>
 #include <map>
 #include <stdlib.h>
+//最长 和=K的子数组
 using  namespace  std;
 class Solution{
     public:
@@ -29,7 +30,7 @@ class Solution{
             }
             return __res;
         }
-        int get_Even_Odd_longest(vector<int>& nums){
+        int get_Even_Add_longest(vector<int>& nums){
             int size  = nums.size();
             int sum   = 0;
             int __res = 0;
@@ -71,7 +72,7 @@ int main(int argc,const char *argv[]){
     vector<int> nums2 = {7,2,1,1,3,8,-2,6};
     vector<int> nums1 = {3,2,1,0,1,2,3,0};
     //cout<<te.get_sum_longest(nums2,7)<<endl;
-    //cout<<te.get_Even_Odd_longest(nums2)<<endl;
+    //cout<<te.get_Even_Add_longest(nums2)<<endl;
     cout<<te.get_xor_is_zero_longest(nums1)<<endl;
     return 0;
 }

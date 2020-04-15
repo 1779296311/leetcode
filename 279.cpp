@@ -35,3 +35,8 @@ class Solution{
             return dp[n];
         }
 };
+int main(int argc,const char *argv[]){
+    Solution te;
+    te.numSquares(9);
+    return 0;
+}

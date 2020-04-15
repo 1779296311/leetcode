@@ -57,4 +57,10 @@ class Solution{
             return dp[sizeS][sizeT];
         }
 };
-
+int main(int argc,const char *argv[]){
+    Solution te;
+    string s = "mississppi";
+    string t = "mis*is*p*.";
+    cout<<te.isMatch_2020(s,t)<<endl;
+    return 0;
+}
