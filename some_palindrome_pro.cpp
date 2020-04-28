@@ -105,7 +105,7 @@ class Solution{
             while(row<sizea){
                 int r = row;
                 int c = col;
-                while(r<sizea && c < sizeb){
+                while(r<sizea && c<sizeb){
                     if(a[r] == b[c]){
                         ++len;
                     }else{
@@ -148,14 +148,52 @@ class Solution{
             }
             return __res;
         }
+        //最shao划分
+        int min_split_palindrome(string a){
+            int size = a.length();
+            if(!size){
+                return 0;
+            }
+            vector<vector<bool>> dp_1(size,vector<bool>(size,0));
+            get_array(a,dp_1);
+            vector<int> dp(size+1,INT_MAX);
+            dp[0] = 0;
+            for(int i=1; i<=size; ++i){
+                for(int j=0; j<i; ++j){
+                    if(dp_1[j][i-1]){
+                        dp[i] = min(dp[i],dp[j]+1);
+                    }
+                }
+            }
+            //debug(dp);
+            return dp[size]-1;
+        }
+        void get_array(string a, vector<vector<bool>>& dp){
+            int size = a.length();
+            for(int d=0; d<size; ++d){
+                for(int left=0; left+d<size; ++left){
+                    int right = left + d;
+                    if(!d || (dp[left+1][right-1]&&(a[left]==a[right]))){
+                        dp[left][right] = true;
+                    }
+                }
+            }
+        }
+        void debug(vector<int>& a){
+            for(int i=0; i<a.size();++i){
+                cout<<a[i]<<"  ";
+            }
+            cout<<endl;
+        }
 };
 int main(int argc,const char *argv[]){
     Solution te;
     string a = "sdjaaaavaaaajds";
-    string b = "badab";
+    string b = "abadab";
     string c = "sskjfss";
     string d = "abs";
-    cout<<te.min_add_all(b)<<endl;
+    cout<<te.min_split_palindrome(a)<<endl;
+    //cout<<te.min_add_all(b)<<endl;
     //cout<<a<<endl;
     //cout<<te.min_add_end(a)<<endl;
     //cout<<"------"<<endl;

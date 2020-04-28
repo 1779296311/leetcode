@@ -6,6 +6,7 @@
 *     data     : 2019--09--13
 **********************************************/
 #include <iostream>
+#include <climits>
 #include <stdlib.h>
 #include <vector>
 using  namespace  std;
@@ -14,7 +15,7 @@ class Solution{
     public:
         int longestIncreasingContinuousSubsequence(vector<int>& nums){
             int len  = nums.size();
-            if(size == 0){
+            if(len == 0){
                 return 0;
             }
             int max  = INT_MIN;
@@ -38,3 +39,5 @@ class Solution{
             return max;
         }
 };
+int main(int argc,const char *argv[]){
+}

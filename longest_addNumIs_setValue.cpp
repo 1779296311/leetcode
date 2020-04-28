@@ -7,12 +7,23 @@
 **********************************************/
 #include <iostream>
 #include <vector>
+#include <climits>
 #include <map>
 #include <stdlib.h>
-//最长 和=K的子数组
 using  namespace  std;
 class Solution{
     public:
+        int getMaxAdd(vector<int>& nums){
+            int size = nums.size();
+            int maxV = INT_MIN;
+            int sum  = 0;
+            for(int i=0; i<size; ++i){
+                maxV = max(maxV,sum);
+                sum  += sum+nums[i]>=0?nums[i]:-sum;
+            }
+            return maxV;
+        }
+//最长 和=K的子数组(-,+)
         int get_sum_longest(vector<int>& nums,int value){
             int size = nums.size();
             map<int,int> mp;
@@ -29,6 +40,31 @@ class Solution{
                 }
             }
             return __res;
+        }
+//最长 和=K的子数组(+)
+        int get_sum_longest_2(vector<int>& nums, int k){
+            int L    = 0;
+            int R    = 0;
+            int size = nums.size();
+            int sum  = 0;
+            int res  = -1;
+            while(R<size){
+                if(sum + nums[R] < k){
+                    sum = sum + nums[R++];
+                }else if(sum + nums[R] > k){
+                    if(nums[R] > k){
+                        res = max(res,1);
+                        L   = ++R;
+                        sum = 0;
+                    }else{
+                        sum = sum - nums[L++];
+                    }
+                }else{
+                    res = max(res,R-L+1);
+                    sum = sum + nums[R++];
+                }
+            }
+            return res;
         }
         int get_Even_Add_longest(vector<int>& nums){
             int size  = nums.size();
@@ -70,9 +106,12 @@ class Solution{
 int main(int argc,const char *argv[]){
     Solution te;
     vector<int> nums2 = {7,2,1,1,3,8,-2,6};
-    vector<int> nums1 = {3,2,1,0,1,2,3,0};
+    vector<int> nums1 = {5,2,1,8,0,8,3,0};
+    vector<int> nums = {5,2,1,-1,-2,8,0};
+    cout<<te.getMaxAdd(nums)<<endl;
+    //cout<<te.get_sum_longest_2(nums1,5)<<endl;
     //cout<<te.get_sum_longest(nums2,7)<<endl;
     //cout<<te.get_Even_Add_longest(nums2)<<endl;
-    cout<<te.get_xor_is_zero_longest(nums1)<<endl;
+    //cout<<te.get_xor_is_zero_longest(nums1)<<endl;
     return 0;
 }

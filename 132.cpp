@@ -46,10 +46,9 @@ class Solution{
 };
 int main(int argc,const char *argv[]){
     Solution te;
-    //string  s = "aslasalab";
-    string  s = "ab";
-    cout <<te.minCutPalindrome(s) <<endl;
-
+    string  s = "aslasalab";
+    //string  s = "ab";
+    //cout <<te.minCutPalindrome(s) <<endl;
     return 0;
 }
             //for(int i=0; i<size; i++){

@@ -35,6 +35,7 @@ r   g  ta  e
 给出两个长度相等的字符串 s1 和 s2，判断 s2 是否是 s1 的扰乱字符串。
 */
 #include <iostream>
+#include <vector>
 #include <stdlib.h>
 #include <string>
 using  namespace  std;
@@ -46,7 +47,7 @@ class Solution{
                 return false;
             }
             vector<vector<vector<bool>>> memo(size, vector<vector<bool>>(size, vector<bool>(size+1, false)));
-            for(int i=0; i<szie; i++){
+            for(int i=0; i<size; i++){
                 for(int j=0; j<size; j++){
                     memo[i][j][1] = s1[i] == s2[j];
                 }
@@ -57,6 +58,7 @@ class Solution{
                         for(int k=1; k<length; k++){
                             if((memo[i][j][k] && memo[i+k][j+k][length-k]) || (memo[i+k][j][length-k] && memo[i][j+length-k][k])){
                                 memo[i][j][length] = true;
+                                break;
                             }
                         }
                     }

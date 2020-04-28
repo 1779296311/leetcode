@@ -35,8 +35,8 @@ class Solution{
 };
 int main(int argc,const char *argv[]){
     Solution te;
-    int l = 25; 
-    int p = 10; 
+    int l = 25;
+    int p = 10;
     vector<int> cost = {15,11,5,4};
     vector<int> gas  = {10,5,2,4};
     cout<<te.getMinStop(l,p,gas,cost)<<endl;
