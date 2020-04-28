@@ -105,6 +105,7 @@ class Solution{
             while(row<sizea){
                 int r = row;
                 int c = col;
+                len   = 0;
                 while(r<sizea && c<sizeb){
                     if(a[r] == b[c]){
                         ++len;
@@ -188,11 +189,15 @@ class Solution{
 };
 int main(int argc,const char *argv[]){
     Solution te;
-    string a = "sdjaaaavaaaajds";
+    string a3 = "asjaskdjlasjdlkasfoiqefhadglsjdhffddkajsfh";
+    string c3 = "aaaaaaaaaasjaskdjlasjdlkasfoiqefhadglsjdhffddkajsfhasdassdasdjahsfjhalkfzlvxhklxcvxhvsdkdjlajsdlkafsoiqehfadglsjdhffddkajsfh";
+
     string b = "abadab";
-    string c = "sskjfss";
-    string d = "abs";
-    cout<<te.min_split_palindrome(a)<<endl;
+    string a = "aaaass";
+    string c = "s";
+    cout<<a3.length()<<endl;;
+    cout<<te.longest_Son(a,c)<<endl;
+    //cout<<te.min_split_palindrome(a)<<endl;
     //cout<<te.min_add_all(b)<<endl;
     //cout<<a<<endl;
     //cout<<te.min_add_end(a)<<endl;
