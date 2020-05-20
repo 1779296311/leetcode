@@ -141,17 +141,17 @@ class Solution{
 };
 int main(int argc,const char *argv[]){
     Solution te;
+    int  nums[] = {2,4,6,8,1,3,5,7};
+    int size = *(&nums+1)-nums;
+    te.debug(nums,size);
+    te.shuffle(nums,0,size);
+    te.debug(nums,size);
     //cout<<te.less_ThreeK(1)<<endl;
     //int  nums[] = {1,2,3,4,5,6,7,8,9,10};
-    int  nums[] = {1,2,3,4,0,0,0,0};
-    //int  nums[] = {2,4,6,8,1,3,5,7};
+    //int  nums[] = {1,2,3,4,0,0,0,0};
     //int  nums[] = {0,0,0,0,1,1,1,1,2,2,2,2};
     //int  nums[] = {3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2};
     //int  nums[] = {3,2};
     //int  nums[] = {2,2,2,3,1,4};
-    int size = *(&nums+1)-nums;
-    te.debug(nums,size);
-    te.rorate(nums,1,4,7);
-    te.debug(nums,size);
     return 0;
 }

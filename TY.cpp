@@ -11,6 +11,7 @@
 using  namespace  std;
 class Solution{
     public:
+        // da xiao xiang tong
         int isTY(string a, string b){
             int sizeA = a.length();
             int sizeB = b.length();
@@ -40,6 +41,34 @@ class Solution{
             }
             return !flag?sizeB-sizeA:-1;
         }
+        int isTY2(string a, string b){
+            int sizeA = a.length();
+            int sizeB = b.length();
+            vector<int> cost(256,0);
+            int lessN = sizeA;
+            for(int i=0; i<sizeA; ++i){
+                ++cost[a[i]];
+            }
+            for(int i=0; i<sizeA; ++i){
+                if(--cost[b[i]] >= 0){
+                    --lessN;
+                }
+            }
+            for(int i=sizeA; i<sizeB; ++i){
+                if(!lessN){
+                    return i-sizeA;
+                }
+                if(--cost[b[i]] >=0){
+                    --lessN;
+                }
+                if(++cost[b[i-sizeA]] >0){
+                    ++lessN;
+                }
+            }
+            return !lessN?sizeB-sizeA:-1;
+        }
+        ///-------------------------------------------------------------------------
+        //daxiao bu tong
         int minTY(string a, string b){
             int sizeA = a.length();
             int sizeB = b.length();
@@ -51,7 +80,7 @@ class Solution{
                 ++cost[a[i]];
             }
             int all   = sizeA;
-            int res   = sizeB;
+            int res   = sizeB+1;
             int left  = 0;
             int right = 0;
             while(right<sizeB){
@@ -70,10 +99,32 @@ class Solution{
 };
 int main(int argc,const char *argv[]){
     Solution te;
-    string a = "gghghb";
-    string b = "asgghhhhhghbdbzh";
+    string a3 = "gghghb";
+    string b3 = "gghghb";
+    string a4 = "gghghb";
+    string b4 = "asgghgghghbhhhhghbdbzh";
+    string a1 = "gghghb";
+    string b1 = "asgghhhhhghbdbzh";
+    string a2 = "gghgghhhhhghbdbzhghb";
+    string b2 = "asgghhhhhghbdbzh";
+    string a  = "gghghb";
+    string b  = "asgghhhhhghbdbzh";
+    cout<<te.isTY(a,b)<<endl;
+    cout<<te.isTY2(a,b)<<endl;
+    cout<<"----------------------------"<<endl;
+    cout<<te.isTY(a1,b1)<<endl;
+    cout<<te.isTY2(a1,b1)<<endl;
+    cout<<"----------------------------"<<endl;
+    cout<<te.isTY(a3,b3)<<endl;
+    cout<<te.isTY2(a3,b3)<<endl;
+    cout<<"----------------------------"<<endl;
+    cout<<te.isTY(a2,b2)<<endl;
+    cout<<te.isTY2(a2,b2)<<endl;
+    cout<<"----------------------------"<<endl;
+    cout<<te.isTY(a4,b4)<<endl;
+    cout<<te.isTY2(a4,b4)<<endl;
+    cout<<"----------------------------"<<endl;
     //string b = "asdzxbncghhhhhhhhghbgjaaa";
     //cout<<te.isTY(a,b)<<endl;
-    cout<<te.minTY(a,b)<<endl;
     return 0;
 }

@@ -73,7 +73,6 @@ int main(int argc,const char *argv[]){
     Solution te;
     int nums[] = {4,4,5,1,6,8,12};
     te.debug(nums,*(&nums+1)-nums,5);
-    te.
     //cout<<te.i_j_min_max(nums,5,*(&nums+1)-nums)<<endl;
     return 0;
 }

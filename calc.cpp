@@ -71,7 +71,8 @@ int main(int argc,const char *argv[]){
     //string op = "2*3";
     //string op = "((3+5)*2+4)/5+6+(4*(2+3))-((3+5)*2+4)/5+6/4*2+3";
     //string op = "-2+2";
-    string op = "2-((-2+2)*5+7+(2*3)-6)*1";
+    //string op = "2-((-2+2)*5+7+(2*3)-6)*1";
+    string op = "(-2+1)";
     cout<<te.calc(op)<<endl;
     //cout<<im<<endl;
     return 0;

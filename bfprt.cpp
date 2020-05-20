@@ -36,7 +36,7 @@ class Solution{
              for(int i=0; i<size; ++i){
                  int begin = b + i*5;
                  int end   = begin + 4;
-                 tmp[i] = sort_mid_num(nums,begin,min(end,e));
+                 tmp[i]    = sort_mid_num(nums,begin,min(end,e));
              }
              return bfprt(tmp,0,size-1,size/2);
          }

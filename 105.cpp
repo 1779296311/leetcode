@@ -18,7 +18,22 @@ struct TreeNode {
 using  namespace  std;
 class  Solution{
     public:
-        TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder){
+        TreeNode* buildTree3(vector<int>& preorder, vector<int>& inorder){
+            return partition1(preorder,inorder,0,0,inorder.size()-1);
+        }
+        TreeNode* partition1(vector<int>& pre, vector<int>& in, int root, int begin, int end){
+            if(begin > end){
+                return nullptr;
+            }
+            int index = 0;
+            while(pre[root] != in[index]){++index;}
+            TreeNode* head = new TreeNode(pre[root]);
+            head->left     = partition1(pre,in,root+1,begin,index-1);
+            head->right    = partition1(pre,in,root+1+index-begin,index+1,end);
+            return head;
+        }
+        //////------------------------------------------------------////
+        TreeNode* buildTree2(vector<int>& preorder, vector<int>& inorder){
             if(preorder.empty() || preorder.size() != inorder.size()){
                 return NULL;
             }
@@ -45,7 +60,7 @@ class  Solution{
             }
             return res;
         }
-        TreeNode* buildTree(vector<int>& pre, vector<int>& in){
+        TreeNode* buildTree1(vector<int>& pre, vector<int>& in){
             int size = pre.size();
             if(size == 0){
                 return NULL;

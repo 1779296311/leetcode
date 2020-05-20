@@ -53,7 +53,8 @@ class Solution{
 int main(int argc,const char *argv[]){
     Solution te;
     //vector<int> nums = {0,1,2,3,4,6,7};
-    vector<int> nums = {-5,3,1,2,5,6};
+    //vector<int> nums = {-5,3,1,2,5,6};
+    vector<int> nums = {2,1};
     cout<<te.missNum2(nums)<<endl;
     return 0;
 }
