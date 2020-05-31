@@ -102,7 +102,7 @@ class Solution{
             int sizeJ = matrix[0].size();
             if(sizeI != sizeJ){
                 cout<<"Can't pow!!!"<<endl;
-                return vector<vector<int>>(0);
+                return vector<vector<int>>{};
             }
             vector<vector<int>> res(sizeI,vector<int>(sizeI,0));
             for(int i=0; i<sizeI; ++i){
@@ -122,7 +122,7 @@ class Solution{
             int sizeBJ = b.size();
             if(sizeAI != sizeBJ){
                 cout<<"Can't mul!!!"<<endl;
-                return vector<vector<int>>(0);
+                return vector<vector<int>>{};
             }
             int sizea = a.size();
             int sizeb = b[0].size();

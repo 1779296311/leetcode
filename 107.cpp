@@ -32,7 +32,7 @@ public:
             vector<int> tmp;
             int size = end - begin;
             for(int i=0; i<size; i++){
-                TreeNode* rt   = qu[++end];
+                TreeNode* rt   = qu[++begin];
                 tmp.push_back(rt->val);
                 if(rt->left){
                     qu.push_back(rt->left);

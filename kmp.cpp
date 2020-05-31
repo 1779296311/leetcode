@@ -32,7 +32,6 @@ class Solution{
             int l2    = 0;
             vector<int> next(size2,0);
             getNextArray(next,s2);
-            //debug(next);
             while(l1<size1 && l2<size2){
                 if(s1[l1] == s2[l2]){
                     ++l1; ++l2;

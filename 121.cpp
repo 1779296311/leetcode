@@ -6,6 +6,7 @@
 **********************************************/
 #include <iostream>
 #include <stdlib.h>
+#include <climits>
 #include <vector>
 using  namespace  std;
 
