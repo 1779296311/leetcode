@@ -9,9 +9,12 @@
 #include <vector>
 #include <stack>
 #include <stdlib.h>
+
 #define peek() ({ \
-            auto t = st.top();st.pop();t;\
-        })
+            auto t = st.top(); \
+            st.pop(); \
+            t;})
+
 using  namespace  std;
 //设置一个单调递减的栈
 class Solution{

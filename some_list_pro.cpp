@@ -6,6 +6,8 @@
 *     date     : 2020--05--05
 **********************************************/
 #include <iostream>
+#include <vector>
+#include <queue>
 #include <climits>
 #include <stdlib.h>
 using  namespace  std;
@@ -227,7 +229,7 @@ class Solution{
             list2*  res = changeTreeToList2(head);
             list2*  tmp = res;
             res         = res->next;
-            tmp->next = nullptr;
+            tmp->next   = nullptr;
             return res;
         }
         void debug(list2* head){
@@ -238,18 +240,205 @@ class Solution{
             }
             cout<<endl;
         }
+//-------------------------------k个一组翻转链表
+        listNode* reverseK(int k,listNode* head){
+            listNode* cur   = head;
+            listNode* pre   = nullptr;
+            listNode* next  = nullptr;
+            listNode* begin = nullptr;
+            int count       = 1;
+            while(cur){
+                next   = cur->next;
+                if(count == k){
+                    begin = pre==nullptr?head:pre->next;
+                    head  = pre==nullptr?cur:head;
+                    reverse(pre,begin,cur,next);
+                    count = 0;
+                    pre   = begin;
+                }
+                ++count;
+                cur = next;
+            }
+            return head;
+        }
+
+        void reverse(listNode* left, listNode* begin, listNode* end, listNode* right){
+            listNode* pre  = nullptr;
+            listNode* next = nullptr;
+            listNode* h    = begin;
+            while(begin != right){
+                next        = begin->next;
+                begin->next = pre;
+                pre         = begin;
+                begin       = next;
+            }
+            if(left)left->next  = pre;
+            h->next     = right;
+        }
+//---------------------------------链表相加
+        listNode* add_list(listNode* l1, listNode* l2){
+            listNode* pre1  = nullptr;
+            listNode* pre2  = nullptr;
+            listNode* next1 = nullptr;
+            listNode* next2 = nullptr;
+            int len1        = 0;
+            int len2        = 0;
+            while(l1!=nullptr && ++len1){
+                next1    = l1->next;
+                l1->next = pre1;
+                pre1     = l1;
+                l1       = next1;
+            }
+            while(l2!=nullptr && ++len2){
+                next2    = l2->next;
+                l2->next = pre2;
+                pre2     = l2;
+                l2       = next2;
+            }
+            l1 = pre1;
+            l2 = pre2;
+            pre1 = pre2 = nullptr;
+
+            if(len1<len2){ swap(l1,l2); }
+
+            listNode* H       = new listNode(-1);
+            int flag          = 0;
+            listNode* newNode = nullptr;
+            while(len1-->0){
+                int tmp = 0;
+                if(l2){
+                    tmp   = l2->val;
+
+                    next2    = l2->next;
+                    l2->next = pre2;
+                    pre2     = l2;
+                    l2       = next2;
+                }
+                newNode       = new listNode((tmp+l1->val+flag)%10);
+                newNode->next = H->next;
+                H->next       = newNode;
+                flag          = tmp+l1->val+flag>=10;
+
+                next1    = l1->next;
+                l1->next = pre1;
+                pre1     = l1;
+                l1       = next1;
+            }
+            if(flag) newNode=new listNode(1),newNode->next=H->next,H->next=newNode;
+            return H->next;
+        }
+//--------shan----chu------dao-----shu-----di----K----ge--------------------------------------------
+        listNode* delete_k(int k, listNode* head){
+            listNode* h = head;
+            while(h){
+                h = h->next;
+                --k;
+            }
+            if(!k){
+                listNode* res = head->next;
+                delete(head);
+                return res;
+            }
+            if(k>0){ return head; }
+            ::std::cout<<"K: "<<k<<endl;
+            h = head;
+            while(++k){
+                h = h->next;
+            }
+            listNode*tmp = h->next;
+            h->next = tmp->next;
+            delete(tmp);
+            ::std::cout<<"val: "<<h->val<<endl;
+            return head;
+        }
+//23. 合并K个排序链表
+        struct ListNode {
+            int val;
+            ListNode *next;
+            ListNode(int x) : val(x), next(NULL) {}
+        };
+        ListNode* mergeKLists(::std::vector<ListNode*>& lists) {
+            ListNode* res  = new ListNode(-1);
+            ::std::priority_queue<int,::std::vector<int>,::std::less<int>> big_heap;
+            for(ListNode *head : lists){
+                while(head){
+                    big_heap.push(head->val);
+                    head = head->next;
+                }
+            }
+            while(big_heap.size()){
+                ListNode* tmp = new ListNode(big_heap.top());
+                tmp->next = res->next;
+                res->next = tmp;
+                big_heap.pop();
+            }
+            return res->next;
+        }
+//86 分隔链表
+//定一个链表和一个特定值 x，对链表进行分隔，使得所有小于 x 的节点都在大于或等于 x 的节点之前。
+//应当保留两个分区中每个节点的初始相对位置。
+        ListNode* partition(ListNode* head, int x){
+            ListNode pre(-1);
+
+            ListNode H(INT_MAX);
+            H.next          = head;
+            ListNode* ahead = &H;
+            ListNode* p     = &pre;
+            ListNode* cur   = head;
+            ListNode* next  = nullptr;
+            while(cur){
+                next = cur->next;
+                if(cur->val<x){
+                    ahead->next = next;
+                    cur->next   = nullptr;
+                    p->next     = cur;
+                    p           = cur;
+                    cur   = next;
+                    continue;
+                }
+                ahead = cur;
+                cur   = next;
+            }
+            if(pre.next){
+                p->next = H.next;
+                return pre.next;
+            }
+            return head;
+        }
 };
 int main(int argc,const char *argv[]){
     Solution te;
-    Solution ::tree* head   = new Solution::tree(0);
-    head->left              = new Solution::tree(1);
-    head->left->left        = new Solution::tree(3);
-    head->left->right       = new Solution::tree(4);
-    head->left->right->left = new Solution::tree(5);
-    head->right             = new Solution::tree(-11);
-    head->right->left       = new Solution::tree(6);
-    head->right->right      = new Solution::tree(2);
-    te.debug(te.changeTreeTolist(head));
+    listNode* head                                 = new listNode(1);
+    head->next                                     = new listNode(2);
+    head->next->next                               = new listNode(3);
+    head->next->next->next                         = new listNode(4);
+    head->next->next->next->next                   = new listNode(5);
+    head->next->next->next->next->next             = new listNode(6);
+
+    listNode* head2                                 = new listNode(1);
+    head2->next                                     = new listNode(3);
+    head2->next->next                               = new listNode(2);
+    head2->next->next->next                         = new listNode(5);
+    head2->next->next->next->next                   = new listNode(5);
+    head2->next->next->next->next->next             = new listNode(2);
+    te.debug(head);
+    
+    te.debug(te.delete_k(2,head));
+
+    //listNode* head3 = te.add_list(head,head2);
+    //te.debug(head3);
+    //listNode* head                                 = new listNode(1);
+    //head->next                                     = new listNode(2);
+    //head->next->next                               = new listNode(3);
+    //head->next->next->next                         = new listNode(4);
+    //head->next->next->next->next                   = new listNode(5);
+    //head->next->next->next->next->next             = new listNode(6);
+    //head->next->next->next->next->next->next       = new listNode(7);
+    //head->next->next->next->next->next->next->next = new listNode(8);
+    //te.debug(head);
+    ////te.reverseK(2,head);
+    //te.debug(te.reverseK(2,head));
+    //te.debug(te.changeTreeTolist(head));
     //Solution::List* head                     = new Solution::List(0);
     //head->next                               = new Solution::List(1,head);
     //head->next->next                         = new Solution::List(2);

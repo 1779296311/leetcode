@@ -13,6 +13,20 @@
 #include <stdlib.h>
 class Solution{
     public:
+
+//给定一个未经排序的整数数组，找到最长且连续的的递增序列，并返回该序列的长度。
+        int findLengthOfLCIS(::std::vector<int>& nums) {
+            int size = nums.size();
+            if(size<=1)return size;
+            ::std::vector<int> dp(size,1);
+            int res = 0;
+            for(int i=1; i<size; ++i){
+                if(nums[i-1] < nums[i])dp[i] = dp[i-1] + 1;
+                res = ::std::max(res, dp[i]);
+            }
+            return res;
+        }
+        ///
         int longestIncreasingSubsequence(::std::vector<int>& nums){
             int size = nums.size();
             int res  = 0;
@@ -47,6 +61,7 @@ class Solution{
             }
             return res;
         }
+        //dp[i][j] j结尾的公共上升子序列的集合
         int longestCommenIncreasingSubsequence(::std::vector<int>& nums1, ::std::vector<int>& nums2){
             int size1 = nums1.size();
             int size2 = nums2.size();
@@ -103,13 +118,29 @@ class Solution{
             for(int i=1; i<=size2; ++i)maxv = ::std::max(maxv, dp[i]);
             return maxv;
         }
+        int tmp(::std::vector<int>& n1, ::std::vector<int>& n2){
+            int size1 = n1.size();
+            int size2 = n2.size();
+            ::std::vector<int>dp(size2+1,0);
+            int M = INT_MIN;
+            for(int i=1; i<=size1; ++i){
+                M = 1;
+                for(int j=1; j<=size2; ++j){
+                    if(n1[i-1] == n2[j-1])dp[j] = ::std::max(dp[j], M);
+                    if(n1[i-1] > n2[j-1])M = ::std::max(M, dp[j]+1);
+                }
+            }
+            int res = 0;
+            for(int i=1; i<=size2; ++i)res = ::std::max(res, dp[i]);
+            return res;
+        }
         /******************************************最长连续不重复子序列(chuan)*********************************************/
         int longestUnequalSubsquence(::std::string& a){
             int res = 1;
             ::std::vector<int> N(256,0);
             for(int i=0,j=0; i<a.length(); ++i){
                 ++N[a[i]];
-                while(j<=i && N[a[i]]>1){N[a[j]]--;j++;}
+                while(j<=i && N[a[i]]>1){N[a[j++]]--;}
                 res = ::std::max(res,i-j+1);
             }
             return res;
@@ -121,7 +152,7 @@ class Solution{
             ::std::vector<int> M(256,0);
             int i    = 0;
             while(i<size){
-                if(++M[s[i++]-'a'] > 1 )--all;
+                if(++M[s[i++]-'a'] > 1)--all;
             }
             return all;
         }
@@ -188,6 +219,19 @@ class Solution{
             }
             return res;
         }
+        int consttainedSubset_sum(::std::vector<int>& nums, int k){
+            int size = nums.size();
+            int res  = INT_MIN;
+            ::std::priority_queue<int> heap;
+            ::std::vector<int> dp(size,0);
+            for(int i=0; i<size; ++i){
+                while(heap.size() && heap.top()<i-k)heap.pop();
+                dp[i] = (heap.size()?(::std::max(0, nums[heap.top()])):0)+nums[i];
+                heap.push(i);
+                res = ::std::max(res, dp[i]);
+            }
+            return res;
+        }
         /***********************************************最长定差子序列*******************************************************/
         int longestSubsequence(::std::vector<int>& arr, int difference) {
             ::std::vector<int>dp(arr.size(), 1);
@@ -209,13 +253,16 @@ class Solution{
 };
 int main(int argc,const char *argv[]){
     Solution te;
-    ::std::vector<::std::vector<int>> R= {
-            {0, -2, -7,  0},
-            {9,  2,  -6,  2},
-            {-4, 1, -4,  1},
-            {-1, 8,  0, -2}
-    };
-    ::std::cout<<te.maxSumR(R)<<::std::endl;
+    ::std::string a  ="asdfaghjklzxcvbnm";
+    ::std::string b  ="asnm";
+    ::std::cout<<te.isSubsquence(a,b)<<::std::endl;
+    //::std::vector<::std::vector<int>> R= {
+            //{0, -2, -7,  0},
+            //{9,  2,  -6,  2},
+            //{-4, 1, -4,  1},
+            //{-1, 8,  0, -2}
+    //};
+    //::std::cout<<te.maxSumR(R)<<::std::endl;
     //::std::string  s = "mmmmm";
     //::std::string  a = "pwwkiuew";
     //::std::string  b = "asdsdasdfg";

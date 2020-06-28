@@ -24,6 +24,7 @@ class Solution{
         void multiple_pack(::std::vector<int>& dp, int v, int w, int n, int V){
             if(v*n>V){
                 complete_pack(dp,v,w,V);
+                return;
             }
             int k = 1;
             while(n>=k){
