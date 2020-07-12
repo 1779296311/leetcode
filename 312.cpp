@@ -4,6 +4,7 @@
 *     date     : 2019--09--18
 **********************************************/
 #include <iostream>
+#include <vector>
 #include <stdlib.h>
 using  namespace  std;
 /*
@@ -12,7 +13,7 @@ using  namespace  std;
 **/
 class Solution{
     public:
-        int maxCoin(vector<int>& coins){
+        int maxCoin(::std::vector<int>& coins){
             int size = coins.size();
             if(size == 0){
                 return 0;

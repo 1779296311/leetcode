@@ -9,6 +9,7 @@
 #include <vector>
 #include <climits>
 #include <map>
+#include <unordered_map>
 #include <stdlib.h>
 using  namespace  std;
 class Solution{
@@ -82,7 +83,7 @@ class Solution{
             }
             return __res;
         }
-        int get_xor_is_zero_longest(vector<int>& nums){
+        int get_xor_is_zero_longest(vector<int>& nums){////?????????????????????????????????///
             int size  = nums.size();
             vector<int> dp(size,0);
             map<int,int> mp;
@@ -102,16 +103,35 @@ class Solution{
             }
             return __res;
         }
+        int get_xor_is_zero_longest_1(::std::vector<int>& nums){
+            ::std::unordered_map<int, int> hp;
+            int xr  = 0;
+            int res = 0;
+            hp[0]   = -1;
+            for(int i=0; i<nums.size(); ++i){
+                xr ^= nums[i];
+                if(hp.count(xr)){
+                    res = ::std::max(res, i-hp[xr]);
+                }else{
+                    hp[xr] = i;
+                }
+            }
+            ::std::cout<<"------------------"<<::std::endl;
+            return res;
+        }
 };
 int main(int argc,const char *argv[]){
     Solution te;
-    vector<int> nums2 = {7,2,1,1,3,8,-2,6};
-    vector<int> nums1 = {5,2,1,8,0,8,3,0};
-    vector<int> nums = {5,2,1,-1,-2,8,0};
-    cout<<te.getMaxAdd(nums)<<endl;
+    vector<int> nums2 = {1,0,1,0};
+    //vector<int> nums2 = {1,1,1,1,200,3,1,1,1,1};
+    cout<<te.get_xor_is_zero_longest(nums2)<<endl;
+    cout<<te.get_xor_is_zero_longest_1(nums2)<<endl;
+    //vector<int> nums1 = {5,2,1,8,0,8,3,0};
+    //vector<int> nums = {5,2,1,-1,-2,8,0};
+    //vector<int> nums = {5,2,1,-1,-2,8,0};
+    //cout<<te.getMaxAdd(nums)<<endl;
     //cout<<te.get_sum_longest_2(nums1,5)<<endl;
     //cout<<te.get_sum_longest(nums2,7)<<endl;
     //cout<<te.get_Even_Add_longest(nums2)<<endl;
-    //cout<<te.get_xor_is_zero_longest(nums1)<<endl;
     return 0;
 }

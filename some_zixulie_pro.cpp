@@ -166,12 +166,14 @@ class Solution{
                     M[j][i] = val[j];
                 }
             }
+#ifdef debug
             for(int i=0; i<26; ++i){
                 for(int j=0; j<a.length(); ++j){
                     ::std::cout<<M[i][j]<<" ";
                 }
                 ::std::cout<<::std::endl;
             }
+#endif
             int next = 0;
             for(int i=0; i<b.length(); ++i){
                 if(M[b[i]-'a'][next] == -1){
@@ -221,7 +223,7 @@ class Solution{
         }
         int consttainedSubset_sum(::std::vector<int>& nums, int k){
             int size = nums.size();
-            int res  = INT_MIN;
+            int res  = 0;
             ::std::priority_queue<int> heap;
             ::std::vector<int> dp(size,0);
             for(int i=0; i<size; ++i){

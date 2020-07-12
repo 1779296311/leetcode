@@ -6,10 +6,12 @@
 *     date     : 2020--06--28
 **********************************************/
 #include <iostream>
+#include <climits>
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
 #include <list>
+#include <queue>
 #include <unordered_set>
 #include <stdlib.h>
 class Solution{
@@ -63,11 +65,11 @@ class Solution{
             for(int i=0; i<nums.size(); ++i){
                 if(nums[i]>t/2)break;
                 //auto it = upper_bound(nums.begin()+i+1, nums.end(), t-nums[i]);
-                res = (res+my_pow((upper_bound(nums.begin()+i+1, nums.end(), t-nums[i])-(nums.begin()+i)-1)))%mod;
+                res = (res+my_pow2((upper_bound(nums.begin()+i+1, nums.end(), t-nums[i])-(nums.begin()+i)-1)))%mod;
             }
             return res;
         }
-        int my_pow(int n){
+        int my_pow2(int n){
             long long p = 1;
             long long s = 2;
             while(n){
@@ -99,6 +101,24 @@ class Solution{
                 ++l;
             }
             return res%(int)(1e9+7);
+        }
+
+//给你一个数组 points 和一个整数 k 。数组中每个元素都表示二维平面上的点的坐标，并按照横坐标 x 的值从小到大排序。也就是说 points[i] = [xi, yi] ，并且在 1 <= i < j <= points.length 的前提下， xi < xj 总成立。
+//请你找出 yi + yj + |xi - xj| 的 最大值，其中 |xi - xj| <= k 且 1 <= i < j <= points.length。
+//题目测试数据保证至少存在一对能够满足 |xi - xj| <= k 的点。
+        int findMaxValueOfEquation(::std::vector<::std::vector<int>>& points, int k){
+            ::std::list<::std::pair<int,int>> q;
+            int i    = 0;
+            int size = points.size();
+            int res  = INT_MIN;
+            while(i<size){
+                while(q.size() && q.front().first<points[i][0]-k)q.pop_front();
+                if(q.size()) res = ::std::max(res,q.front().second+points[i][0]+points[i][1]);
+                while(q.size() && q.back().second<=points[i][1]-points[i][0])q.pop_back();
+                q.push_back({points[i][0],points[i][1]-points[i][0]});
+                ++i;
+            }
+            return res;
         }
 };
 int main(int argc,const char *argv[]){

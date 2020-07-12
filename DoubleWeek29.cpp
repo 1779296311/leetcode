@@ -6,6 +6,7 @@
 *     date     : 2020--06--28
 **********************************************/
 #include <iostream>
+#include <bitset>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
@@ -88,10 +89,51 @@ class Solution{
             }
             return res==size?--res:res;
         }
+        int longestSubarray_comm(::std::vector<int>& nums, int k=1){
+            int l     = 0;
+            int r     = 0;
+            int res   = 0;
+            int size  = nums.size();
+            int count = 0;
+            while(r<size){
+                if(!nums[r])++count;
+                while(count>k){
+                    if(!nums[l++])--count;
+                }
+                res = ::std::max(res, r-l+1-k);
+                ++r;
+            }
+            return res;
+        }
 
 //给你一个整数 n 表示某所大学里课程的数目，编号为 1 到 n ，数组 dependencies 中， dependencies[i] = [xi, yi]  表示一个先修课的关系，也就是课程 xi 必须在课程 yi 之前上。同时你还有一个整数 k 。
 //在一个学期中，你 最多 可以同时上 k 门课，前提是这些课的先修课在之前的学期里已经上过了。
 //请你返回上完所有课最少需要多少个学期。题目保证一定存在一种上完所有课的方式。
+        int minNumberOfSemesters(int n, ::std::vector<::std::vector<int>>& d, int k){
+            ::std::vector<int> pre((1<<n), 0);
+            for(auto &n : d){
+                pre[(1<<(n[1]-1))] |= (1<<(n[0]-1));
+            }
+            for(int i=0; i<(1<<n); ++i){
+                pre[i] = pre[i^(i&-i)] | pre[i&-i];
+            }
+            ::std::vector<int> dp((1<<n), 365);
+            dp[0] = 0;
+            for(int i=1; i<(1<<n); ++i){
+                for(int j=i; j; j=(j-1)&i){
+                    if(__builtin_popcount(j) > k)continue;
+                    if((pre[j]&(i^j)) != pre[j])continue;
+                    dp[i] = ::std::min(dp[i], dp[i^j]+1);
+                }
+            }
+#ifdef debug
+   for(int i=0; i<(1<<n); ++i){
+       ::std::cout<<::std::bitset<8>(pre[i])<<::std::endl;
+   }
+#endif
+            return dp[(1<<n)-1];
+        }
+        ///------------------------wrong------------------------------------
         int fuck_minNumberOfSemesters(int n, ::std::vector<::std::vector<int>>&d, int k){
             int size = d.size();
             if(!size){
@@ -134,9 +176,16 @@ class Solution{
 };
 int main(int argc,const char *argv[]){
     Solution te;
-    ::std::vector<::std::vector<int>> nums = {{3,1}};
-    int n = 5;
-    int k = 4;
+
+    //::std::vector<::std::vector<int>> nums = {{2,1},{3,1},{4,1},{1,5}};
+    ::std::vector<::std::vector<int>> nums = {{2,1},{3,1},{1,4}};
+    int n = 4;
+    int k = 3;
     ::std::cout<<te.minNumberOfSemesters(n,nums,k)<<::std::endl;
+
+    //::std::vector<int> nums = {1,1,1,1,1,1,1,1,1,1};
+    //int k = 2;
+    //::std::cout<<te.longestSubarray_better(nums)<<::std::endl;
+    //::std::cout<<te.longestSubarray_comm(nums, k)<<::std::endl;
     return 0;
 }

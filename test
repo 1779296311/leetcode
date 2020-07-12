@@ -19,3 +19,160 @@ class Solotion{
 
 
 
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.025  000.025: --- NVIM STARTING ---
+000.785  000.760: locale set
+001.121  000.336: inits 1
+001.146  000.025: window checked
+001.150  000.004: parsing arguments
+001.221  000.070: expanding arguments
+001.279  000.059: inits 2
+001.957  000.678: init highlight
+003.806  001.849: waiting for UI
+004.918  001.112: done waiting for UI
+004.943  000.025: initialized screen early for UI
+005.029  000.017  000.017: sourcing /usr/share/nvim/archlinux.vim
+005.036  000.059  000.042: sourcing /etc/xdg//nvim/sysinit.vim
+013.915  000.036  000.036: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+013.993  000.034  000.034: sourcing /usr/share/vim/vimfiles/ftdetect/dockerfile.vim
+014.088  008.929  008.859: sourcing /usr/share/nvim/runtime/filetype.vim
+014.252  000.051  000.051: sourcing /usr/share/nvim/runtime/ftplugin.vim
+015.649  000.897  000.897: sourcing /usr/share/nvim/runtime/scripts.vim
+016.583  000.099  000.099: sourcing /home/jy/.config/nvim/my_script/my_split.vim
+016.691  000.063  000.063: sourcing /home/jy/.config/nvim/my_script/my_header.vim
+016.758  000.029  000.029: sourcing /home/jy/.config/nvim/_machine_specific.vim
+016.883  000.092  000.092: sourcing /home/jy/.config/nvim/snippits.vim
+019.066  002.102  002.102: sourcing /home/jy/.config/nvim/autoload/plug.vim
+026.116  001.213  001.213: sourcing /usr/share/nvim/runtime/ftoff.vim
+049.337  000.055  000.055: sourcing /home/jy/.config/nvim/plugged/vim-fugitive/ftdetect/fugitive.vim
+050.235  000.696  000.696: sourcing /home/jy/.config/nvim/plugged/neoterm/ftdetect/set_repl_cmd.vim
+050.862  000.060  000.060: sourcing /home/jy/.config/nvim/plugged/ultisnips/ftdetect/snippets.vim
+051.478  000.042  000.042: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+051.604  000.071  000.071: sourcing /usr/share/vim/vimfiles/ftdetect/dockerfile.vim
+051.784  019.702  018.778: sourcing /usr/share/nvim/runtime/filetype.vim
+052.560  000.045  000.045: sourcing /usr/share/nvim/runtime/ftplugin.vim
+053.588  000.157  000.157: sourcing /usr/share/nvim/runtime/indent.vim
+056.138  000.863  000.863: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+056.566  001.952  001.089: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+056.660  002.709  000.757: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+062.723  000.538  000.538: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+064.819  000.448  000.448: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+081.689  021.417  020.431: sourcing /home/jy/.config/nvim/colors/deus.vim
+084.803  000.738  000.738: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+088.419  000.636  000.636: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+103.402  021.393  020.018: sourcing /home/jy/.config/nvim/colors/deus.vim
+103.984  098.922  020.023: sourcing /home/jy/.config/nvim/init.vim
+104.002  000.078: sourcing vimrc file(s)
+104.549  000.062  000.062: sourcing /home/jy/.config/nvim/plugged/golden_size/plugin/golden_size.vim
+105.502  000.214  000.214: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/init.vim
+106.551  000.212  000.212: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/parts.vim
+109.931  000.601  000.601: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/util.vim
+110.167  005.440  004.414: sourcing /home/jy/.config/nvim/plugged/vim-airline/plugin/airline.vim
+110.556  000.134  000.134: sourcing /home/jy/.config/nvim/plugged/vim-airline-themes/plugin/airline-themes.vim
+111.594  000.241  000.241: sourcing /home/jy/.config/nvim/plugged/vim-bufferline/autoload/bufferline.vim
+111.865  001.099  000.858: sourcing /home/jy/.config/nvim/plugged/vim-bufferline/plugin/bufferline.vim
+112.652  000.296  000.296: sourcing /home/jy/.config/nvim/plugged/coc.nvim/autoload/coc/rpc.vim
+114.113  001.243  001.243: sourcing /home/jy/.config/nvim/plugged/coc.nvim/autoload/coc/util.vim
+114.944  000.388  000.388: sourcing /home/jy/.config/nvim/plugged/coc.nvim/autoload/coc/client.vim
+125.391  013.293  011.366: sourcing /home/jy/.config/nvim/plugged/coc.nvim/plugin/coc.vim
+127.389  001.216  001.216: sourcing /home/jy/.config/nvim/plugged/conflict-marker.vim/plugin/conflict_marker.vim
+131.605  003.945  003.945: sourcing /home/jy/.config/nvim/plugged/vim-fugitive/plugin/fugitive.vim
+132.420  000.632  000.632: sourcing /home/jy/.config/nvim/plugged/vim-signify/plugin/signify.vim
+133.001  000.186  000.186: sourcing /home/jy/.config/nvim/plugged/vim-signature/autoload/signature/utils.vim
+134.654  002.050  001.863: sourcing /home/jy/.config/nvim/plugged/vim-signature/plugin/signature.vim
+135.611  000.082  000.082: sourcing /home/jy/.config/nvim/plugged/neoterm/autoload/neoterm/term.vim
+135.861  000.055  000.055: sourcing /home/jy/.config/nvim/plugged/neoterm/autoload/neoterm/term/neovim.vim
+136.269  001.400  001.263: sourcing /home/jy/.config/nvim/plugged/neoterm/plugin/neoterm.vim
+136.687  000.243  000.243: sourcing /home/jy/.config/nvim/plugged/restore_view.vim/plugin/restore_view.vim
+137.420  000.298  000.298: sourcing /home/jy/.config/nvim/plugged/suda.vim/autoload/suda.vim
+137.872  000.981  000.683: sourcing /home/jy/.config/nvim/plugged/suda.vim/plugin/suda.vim
+138.292  000.231  000.231: sourcing /home/jy/.config/nvim/plugged/ctags.vim/plugin/ctags.vim
+138.530  000.071  000.071: sourcing /home/jy/.config/nvim/plugged/SimpylFold/plugin/SimpylFold.vim
+138.881  000.205  000.205: sourcing /home/jy/.config/nvim/plugged/far.vim/plugin/far.vim
+139.559  000.049  000.049: sourcing /home/jy/.config/nvim/plugged/wildfire.vim/autoload/wildfire/triggers.vim
+140.051  001.018  000.969: sourcing /home/jy/.config/nvim/plugged/wildfire.vim/plugin/wildfire.vim
+140.814  000.587  000.587: sourcing /home/jy/.config/nvim/plugged/vim-multiple-cursors/plugin/multiple_cursors.vim
+141.232  000.276  000.276: sourcing /home/jy/.config/nvim/plugged/tabular/plugin/Tabular.vim
+141.846  000.485  000.485: sourcing /home/jy/.config/nvim/plugged/auto-pairs/plugin/auto-pairs.vim
+142.590  000.592  000.592: sourcing /home/jy/.config/nvim/plugged/vim-surround/plugin/surround.vim
+149.260  006.528  006.528: sourcing /home/jy/.config/nvim/plugged/nerdcommenter/plugin/NERD_commenter.vim
+150.425  001.010  001.010: sourcing /home/jy/.config/nvim/plugged/bufexplorer/plugin/bufexplorer.vim
+150.924  000.361  000.361: sourcing /home/jy/.config/nvim/plugged/vim-highlightedyank/plugin/highlightedyank.vim
+151.103  000.067  000.067: sourcing /home/jy/.config/nvim/plugged/ag.vim/plugin/ag.vim
+151.238  000.044  000.044: sourcing /home/jy/.config/nvim/plugged/rainbow_parentheses.vim/plugin/rainbow_parentheses.vim
+151.435  000.117  000.117: sourcing /home/jy/.config/nvim/plugged/rnvimr/plugin/rnvimr.vim
+151.790  000.268  000.268: sourcing /home/jy/.config/nvim/plugged/dashboard-nvim/plugin/dashboard.vim
+152.290  000.078  000.078: sourcing /home/jy/.config/nvim/plugged/ultisnips/autoload/UltiSnips/map_keys.vim
+152.410  000.532  000.454: sourcing /home/jy/.config/nvim/plugged/ultisnips/plugin/UltiSnips.vim
+152.539  000.039  000.039: sourcing /home/jy/.config/nvim/plugged/vim-snippets/plugin/vimsnippets.vim
+152.863  000.179  000.179: sourcing /home/jy/.config/nvim/plugged/vim-autoformat/plugin/autoformat.vim
+153.582  000.685  000.685: sourcing /home/jy/.config/nvim/plugged/vim-autoformat/plugin/defaults.vim
+153.651  000.026  000.026: sourcing /home/jy/.config/nvim/plugged/vim-autoformat/plugin/utils.vim
+154.254  000.234  000.234: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+154.310  000.015  000.015: sourcing /usr/share/nvim/runtime/plugin/health.vim
+154.443  000.105  000.105: sourcing /usr/share/nvim/runtime/plugin/man.vim
+155.401  000.320  000.320: sourcing /usr/share/nvim/runtime/pack/dist/opt/matchit/plugin/matchit.vim
+155.467  000.991  000.671: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+155.661  000.160  000.160: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+156.285  000.586  000.586: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+156.524  000.013  000.013: sourcing /home/jy/.local/share/nvim/rplugin.vim
+156.534  000.197  000.184: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+156.746  000.157  000.157: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+156.824  000.033  000.033: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+157.062  000.201  000.201: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+157.223  000.120  000.120: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+157.295  000.028  000.028: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+157.543  000.214  000.214: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+158.229  000.568  000.568: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+158.240  006.811: loading plugins
+158.362  000.122: loading packages
+158.609  000.056  000.056: sourcing /home/jy/.config/nvim/plugged/vim-signature/after/plugin/signature.vim
+159.375  000.404  000.404: sourcing /home/jy/.config/nvim/plugged/tabular/autoload/tabular.vim
+161.421  002.717  002.313: sourcing /home/jy/.config/nvim/plugged/tabular/after/plugin/TabularMaps.vim
+161.680  000.152  000.152: sourcing /home/jy/.config/nvim/plugged/ultisnips/after/plugin/UltiSnips_after.vim
+161.719  000.432: loading after plugins
+161.738  000.020: inits 3
+168.838  007.099: reading ShaDa
+169.764  000.487  000.487: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions.vim
+169.969  000.116  000.116: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/quickfix.vim
+170.438  000.407  000.407: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline.vim
+170.684  000.088  000.088: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/netrw.vim
+171.047  000.145  000.145: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/section.vim
+171.676  000.473  000.473: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/highlighter.vim
+171.936  001.147  000.530: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/term.vim
+172.326  000.244  000.244: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/hunks.vim
+172.547  000.089  000.089: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/csv.vim
+173.065  000.397  000.397: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/branch.vim
+173.244  000.048  000.048: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/bufferline.vim
+173.632  000.149  000.149: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/coc.vim
+174.088  000.310  000.310: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/whitespace.vim
+174.593  000.137  000.137: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/po.vim
+174.874  000.185  000.185: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/wordcount.vim
+175.093  000.062  000.062: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/keymap.vim
+181.218  000.179  000.179: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/themes.vim
+181.486  000.558  000.379: sourcing /home/jy/.config/nvim/plugged/vim-airline-themes/autoload/airline/themes/base16_google.vim
+183.777  000.301  000.301: sourcing /home/jy/.config/nvim/plugged/vim-airline-themes/autoload/airline/themes/base16_google.vim
+203.242  000.325  000.325: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/builder.vim
+203.685  000.087  000.087: sourcing /home/jy/.config/nvim/plugged/vim-airline/autoload/airline/extensions/default.vim
+225.986  052.013: opening buffers
+226.214  000.106  000.106: sourcing /home/jy/.config/nvim/plugged/vim-signify/autoload/sy.vim
+226.569  000.170  000.170: sourcing /home/jy/.config/nvim/plugged/vim-signature/autoload/signature/sign.vim
+227.016  000.188  000.188: sourcing /home/jy/.config/nvim/plugged/vim-signature/autoload/signature/mark.vim
+231.459  005.008: BufEnter autocommands
+231.464  000.005: editing files in windows
+231.955  000.269  000.269: sourcing /home/jy/.config/nvim/plugged/rainbow_parentheses.vim/autoload/rainbow_parentheses.vim
+233.575  000.201  000.201: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+234.444  000.143  000.143: sourcing /home/jy/.config/nvim/plugged/dashboard-nvim/autoload/dashboard.vim
+234.827  000.034  000.034: sourcing /home/jy/.config/nvim/plugged/dashboard-nvim/autoload/dashboard/utils.vim
+235.321  000.086  000.086: sourcing /home/jy/.config/nvim/plugged/dashboard-nvim/autoload/dashboard/section.vim
+238.251  000.134  000.134: sourcing /home/jy/.config/nvim/plugged/dashboard-nvim/syntax/dashboard.vim
+245.479  013.148: VimEnter autocommands
+245.487  000.008: UIEnter autocommands
+245.492  000.005: before starting main loop
+260.858  015.367: first screen update
+260.865  000.007: --- NVIM STARTED ---

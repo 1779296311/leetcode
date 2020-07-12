@@ -6,6 +6,7 @@
 *     date     : 2019--10--03
 **********************************************/
 #include <iostream>
+#include <algorithm>
 #include <stdlib.h>
 #include <vector>
 using  namespace  std;
@@ -32,19 +33,13 @@ class Solution{
                 }
                 while(mid < right){
                     if((nums[left] + nums[mid] + nums[right]) > 0){
-                        right--;
+                        --right;
                     }else if((nums[left] + nums[mid] + nums[right]) < 0){
-                        mid++;
+                        ++mid;
                     }else{
                         res.push_back({nums[left],nums[mid],nums[right]});
-                        while(mid<right && nums[mid] == nums[mid+1]){
-                            mid++;
-                        }
-                        while(mid<right && nums[right] == nums[right-1]){
-                            right--;
-                        }
-                        mid++;
-                        right--;
+                        while(mid<right && nums[mid++] == nums[mid]);
+                        while(mid<right && nums[right--] == nums[right]);
                     }
                 }
             }
