@@ -225,12 +225,10 @@ class Solution{
             int size = nums.size();
             int res  = 0;
             ::std::priority_queue<int> heap;
-            ::std::vector<int> dp(size,0);
             for(int i=0; i<size; ++i){
                 while(heap.size() && heap.top()<i-k)heap.pop();
-                dp[i] = (heap.size()?(::std::max(0, nums[heap.top()])):0)+nums[i];
+                res = ::std::max(res, (heap.size()?(::std::max(0, nums[heap.top()])):0)+nums[i]);
                 heap.push(i);
-                res = ::std::max(res, dp[i]);
             }
             return res;
         }

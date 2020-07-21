@@ -8,6 +8,7 @@
 #include <iostream>
 #include <queue>
 #include <unordered_map>
+#include <unordered_map>
 #include <list>
 #include <set>
 #include <unordered_set>
@@ -45,11 +46,10 @@ class Solution{
                 }
             }
             int res = 0;
-            ::std::vector<::std::vector<int>> dp(n, ::std::vector<int>(m, 0));
             for(int i=0; i<n; ++i){
                 for(int j=0; j<m; ++j){
                     int len = ::std::min(left[i][j], top[i][j]);
-                    while(len < res){
+                    while(len > res){
                         if(left[i-len+1][j]>=len && top[i][j-len+1]>=len){
                             res = ::std::max(res, len);
                             break;
@@ -59,6 +59,46 @@ class Solution{
                 }
             }
             return res*res;
+        }
+//在一个由 0 和 1 组成的二维矩阵内，找到只包含 1 的最大正方形，并返回其面积。
+        int maxmalSquare(std::vector<std::vector<char>> matrix){
+            int n = matrix.size();
+            if(!n)return 0;
+            int m = matrix[0].size();
+            std::vector<std::vector<int>> left(n, std::vector<int>(m, 0));
+            std::vector<std::vector<int>> top(n, std::vector<int>(m, 0));
+            for(int i=0; i<n; ++i){
+                for(int j=0; j<m; ++j){
+                    if(matrix[i][j]=='0')continue;
+                    left[i][j] = 1;
+                    top[i][j]  = 1;
+                    if(j)left[i][j] += left[i][j-1];
+                    if(i)top[i][j]  += top[i-1][j];
+                }
+            }
+            int res = 0;
+            for(int i=0; i<n; ++i){
+                for(int j=0; j<m; ++j){
+                    int len = std::min(left[i][j], top[i][j]);
+                    while(len > res){
+                        int t1 = j - len + 1;
+                        for(; t1<j && top[i][t1]>=len; ++t1);
+                        if(t1<j){
+                            len = top[i][t1];
+                            continue;
+                        }
+                        int t2 = i - len + 1;
+                        for(; t2< i && left[t2][j]>=len; ++t2);
+                        if(t2<i){
+                            len = top[t2][j];
+                            continue;
+                        }
+                        res = ::std::max(res, len);
+                        break;
+                    }
+                }
+            }
+            return res * res;
         }
 
 //给出一些不同颜色的盒子，盒子的颜色由数字表示，即不同的数字表示不同的颜色。
@@ -169,7 +209,7 @@ class Solution{
             int sum   = 0;
             int res   = 0;
             for(int i=sf.size()-1; i>=0;--i){
-                sum  += sum + sf[i];
+                sum  += sum1 + sf[i];
                 res   = ::std::max(res, sum);
                 sum1 += sf[i];
             }
@@ -589,6 +629,43 @@ class Solution{
             }
             return dp[0][size-1] > 0;
         }
+
+//几张卡牌 排成一行，每张卡牌都有一个对应的点数。点数由整数数组 cardPoints 给出。 每次行动，你可以从行的开头或者末尾拿一张卡牌，最终你必须正好拿 k 张卡牌。 你的点数就是你拿到手中的所有卡牌的点数之和。 给你一个整数数组 cardPoints 和整数 k，请你返回可以获得的最大点数。
+        int maxScore(std::vector<int> c, int K){
+            int size   = c.size();
+            int len    = size - K;
+            int tmp    = 0;
+            int min_v  = INT_MAX;
+            int sum    = std::accumulate(c.begin(), c.end(), 0);
+            for(int i=0; i<size; ++i){
+                tmp += c[i];
+                if(i>=len)tmp -= c[i-len];
+                if(i>=len-1)min_v = std::min(min_v, tmp);
+            }
+            return sum - min_v;
+        }
+        int maxScore_fuck(std::vector<int>& c, int K){
+            int size = c.size();
+            std::vector<std::vector<int>> dp_0(size, std::vector<int>(size, 0));
+            std::vector<std::vector<int>> dp_1(size, std::vector<int>(size, 0));
+            int res  = 0;
+            for(int k=0; k<K; ++k){
+                for(int j=0; j<size; ++j){
+                    for(int i=j; i>=0; --i){
+                        if(i+size-j>=K)continue;
+                        if(i==j){
+                            dp_1[i][j] = c[i];
+                            continue;
+                        }
+                        dp_1[i][j] = std::max(c[i]+dp_0[i+1][j], dp_0[i][j-1]+c[j]);
+                        res = std::max(res, dp_1[i][j]);
+                    }
+                }
+                dp_0 = dp_1;
+            }
+            return res;
+        }
+
 //历克斯和李继续他们的石子游戏。许多堆石子 排成一行，每堆都有正整数颗石子 piles[i]。游戏以谁手中的石子最多来决出胜负。 亚历克斯和李轮流进行，亚历克斯先开始。最初，M = 1。 在每个玩家的回合中，该玩家可以拿走剩下的 前 X 堆的所有石子，其中 1 <= X <= 2M。然后，令 M = max(M, X)。 游戏一直持续到所有石子都被拿走。 假设亚历克斯和李都发挥出最佳水平，返回亚历克斯可以得到的最大数量的石头。
         int storeGameII(::std::vector<int>& piles){
             int size = piles.size();
@@ -608,10 +685,9 @@ class Solution{
             }
             return dp[0][1];
         }
-//Alice 和 Bob 两个人轮流玩一个游戏，Alice 先手。 一开始，有 n 个石子堆在一起。每个人轮流操作，正在操作的玩家可以从石子堆里拿走 任意 非零 平方数 个石子。 如果石子堆里没有石子了，则无法操作的玩家输掉游戏。
-//给你正整数 n ，且已知两个人都采取最优策略。如果 Alice 会赢得比赛，那么返回 True ，否则返回 False 。
+//Alice 和 Bob 两个人轮流玩一个游戏，Alice 先手。 一开始，有 n 个石子堆在一起。每个人轮流操作，正在操作的玩家可以从石子堆里拿走 任意 非零 平方数 个石子。 如果石子堆里没有石子了，则无法操作的玩家输掉游戏 给你正整数 n ，且已知两个人都采取最优策略。如果 Alice 会赢得比赛，那么返回 True ，否则返回 False 。
         bool stroeGameIV(int n){
-            ::std::vector<int> dp(n+1, false);
+            ::std::vector<bool> dp(n+1, false);
             for(int i=n; i>=0; --i){
                 for(int j=1; n>=i+j*j; ++j){
                     if((dp[i] = !dp[i+j*j]))break;
@@ -627,7 +703,7 @@ class Solution{
             ::std::vector<int> dp(size+4, 0);
             for(int i=size-1; i>=0; --i){
                 dp[i] = INT_MIN/2;
-                sum += piles[i];
+                sum  += piles[i];
                 dp[i] = ::std::max(dp[i], sum-dp[i+1]);
                 dp[i] = ::std::max(dp[i], sum-dp[i+2]);
                 dp[i] = ::std::max(dp[i], sum-dp[i+3]);
@@ -692,18 +768,519 @@ class Solution{
             }
             return dp[(1<<size)-1] % MOD;
         }
-};
+//你是一位施工队的工长，根据设计师的要求准备为一套设计风格独特的房子进行室内装修。
+//房子的客厅大小为 n x m，为保持极简的风格，需要使用尽可能少的 正方形 瓷砖来铺盖地面。
+//假设正方形瓷砖的规格不限，边长都是整数。
+//请你帮设计师计算一下，最少需要用到多少块方形瓷砖？
+        int tilingRectangle(int n, int m){
+            ::std::vector<::std::vector<int>> dp(n+1, ::std::vector<int>(m+1, INT_MAX));
+            for(int i=0; i<=n; ++i)dp[i][0] = 0;
+            for(int i=0; i<=m; ++i)dp[0][i] = 0;
+            dp[1][1] = 1;
+            for(int i=1; i<=n; ++i){
+                for(int j=1; j<=m; ++j){
+                    for(int k=1; k<=i>>1; ++k){
+                        dp[i][j] = ::std::min(dp[i][j], dp[k][j] + dp[i-k][j]);
+                    }
+                    for(int k=1; k<=j>>1; ++k){
+                        dp[i][j] = ::std::min(dp[i][j], dp[i][k] + dp[i][j-k]);
+                    }
+                    for(int i1=1; i1<i; ++i1){
+                        for(int j1=1; j1<j; ++j1){
+                            dp[i][j] = std::min(dp[i][j], 1+dp[i1][j1+1]+dp[i-i1][j1]+dp[i-i1-1][j-j1]+dp[i1+1][j-j1-1]);
+                        }
+                    }
+                }
+            }
+            return dp[n][m];
+        }
+//给两个整数数组 A 和 B ，返回两个数组中公共的、长度最长的子数组的长度。
+        int findLength(std::vector<int>& A, std::vector<int>& B){
+            int i, j;
+            int cow = 0, rol = B.size() - 1;
+            int len = 0;
+            int res = 0;
+            while(cow < A.size()){
+                i   = cow;
+                j   = rol;
+                len = 0;
+                while(i<A.size() && j<B.size()){
+                    A[i++]==B[j++]?++len:len=0;
+                    res = std::max(res, len);
+                }
+                (void)(rol?--rol:++cow);
+            }
+            return res;
+        }
+//给你一个整数数组 arr 和一个整数 k。 首先，我们要对该数组进行修改，即把原数组 arr 重复 k 次。 举个例子，如果 arr = [1, 2] 且 k = 3，那么修改后的数组就是 [1, 2, 1, 2, 1, 2]。 然后，请你返回修改后的数组中的最大的子数组之和。 注意，子数组长度可以是 0，在这种情况下它的总和也是 0。 由于 结果可能会很大，所以需要 模（mod） 10^9 + 7 后再返回。
+        int kConcatenationMaxSum(std::vector<int>& arr, int k){
+            int MOD   = 1e9 + 7;
+            int max_s = 0;
+            int max_t = 0;
+            int size  = arr.size();
+            for(int i=0; i<size; ++i){
+                max_t = std::max(max_t, 0) + arr[i%size];
+                max_s = std::max(max_t, max_s);
+            }
+            if(k==1)return max_s;
+            for(int i=0; i<size; ++i){
+                max_t = std::max(max_t, 0) + arr[i%size];
+                max_s = std::max(max_t, max_s);
+            }
+            if(k==2)return max_s;
+
+            int sum = std::accumulate(arr.begin(), arr.end(), 0);
+            if(sum<0)return max_s;
+
+            return (max_s + (k-2)*(sum%MOD))%MOD;
+        }
+        int kConcatenationMaxSum_fuck(std::vector<int>& arr, int k){
+            int size = arr.size();
+            if(size<=0)return size;
+
+            ::std::vector<int> dp(size*k, INT_MAX);
+            dp[0]             = arr[0];
+            constexpr int MOD = 1e9+7;
+            int res           = 0;
+            ++k;
+            while(--k){
+                for(int i=1; i<size*k; ++i){
+                    dp[i] = (arr[i%size] + (dp[i-1]>0?dp[i-1]:0)) % MOD;
+                    res   = std::max(res, dp[i]);
+                }
+            }
+            return res % MOD;
+        }
+//在一个火车旅行很受欢迎的国度，你提前一年计划了一些火车旅行。在接下来的一年里，你要旅行的日子将以一个名为 days 的数组给出。每一项是一个从 1 到 365 的整数。
+//一张为期一天的通行证售价为   costs[0] 美元；
+//一张为期七天的通行证售价为   costs[1] 美元；
+//一张为期三十天的通行证售价为 costs[2] 美元。
+//返回你想要完成在给定的列表 days 中列出的每一天的旅行所需要的最低消费。
+        int mincostTickets(std::vector<int>& days, std::vector<int>& costs){
+            int size  = days.size();
+            int max_d = days[size-1];
+            int min_d = days[0];
+            std::vector<int> dp(max_d+31, 0);
+
+            for(int i=max_d,l=size-1; i>=min_d; --i){
+                if(i==days[l]){
+                    dp[i] = std::min(dp[i+1]  + costs[0], dp[i+7]  + costs[1]);
+                    dp[i] = std::min(dp[i], dp[i+30] + costs[2]);
+                    --l;
+                }else{
+                    dp[i] = dp[i+1];
+                }
+            }
+            return dp[min_d];
+        }
+
+//91. 解码方法
+        int numDecodings(std::string& s){
+            int size = s.length();
+            ::std::vector<int> dp(size+1, 0);
+            dp[0] = 1;
+            for(int i=1; i<size; ++i){
+                dp[i] = s[i]=='0'?0:dp[i-1];
+                if(s[i-1]=='1'){
+                    dp[i] += i>1?dp[i-2]:0+1;
+                }else if(s[i-1]=='2' && s[i]<='6'){
+                    dp[i] += i>1?dp[i-2]:0+1;
+                }
+            }
+            return dp[size-1];
+        }
+//  639
+//一条包含字母 A-Z 的消息通过以下的方式进行了编码：
+//'A' -> 1 'B' -> 2 ...  'Z' -> 26
+//除了上述的条件以外，现在加密字符串可以包含字符 '*'了，字符'*'可以被当做1到9当中的任意一个数字。 给定一条包含数字和字符'*'的加密信息，请确定解码方法的总数。
+        int numerDecode(std::string& s){
+            int size = s.length();
+            int MOD  = 1e9+7;
+            ::std::vector<long long> dp(size+1, 0);
+            dp[0] = 1;
+            dp[1] = s[0]=='0'?0:s[0]=='*'?9:1;
+            for(int i=1; i<size; ++i){
+                if(s[i] == '*'){
+                    dp[i+1] = dp[i]*9;
+                    if(s[i-1] == '1'){
+                        dp[i+1] = (dp[i+1] + 9*dp[i-1])  % MOD;
+                    }else if(s[i-1] == '2'){
+                        dp[i+1] = (dp[i+1] + 6*dp[i-1])  % MOD;
+                    }else if(s[i-1]=='*'){
+                        dp[i+1] = (dp[i+1] + 15*dp[i-1]) % MOD;
+                    }
+                }else{
+                    dp[i+1] = s[i]=='0'?0:dp[i];
+                    if(s[i-1]=='1'){
+                        dp[i+1] = (dp[i+1] + dp[i-1]) % MOD;
+                    }else if(s[i-1]=='2' && s[i]<='6'){
+                        dp[i+1] = (dp[i+1] + dp[i-1]) % MOD;
+                    }else if(s[i-1]=='*'){
+                        dp[i+1] = (dp[i+1] + (s[i]<='6'?2:1)*dp[i-1]) % MOD;
+                    }
+                }
+            }
+            return dp[size];
+        }
+//给出 graph 为有 N 个节点（编号为 0, 1, 2, ..., N-1）的无向连通图。  graph.length = N，且只有节点 i 和 j 连通时，j != i 在列表 graph[i] 中恰好出现一次。 返回能够访问所有节点的最短路径的长度。你可以在任一节点开始和停止，也可以多次重访节点，并且可以重用边。
+        void floyd(::std::vector<::std::vector<int>>& p){
+            int n = p.size();
+            for(int i=0; i<n; ++i){
+                for(int j=0; j<n; ++j){
+                    for(int k=0; k<n; ++k){
+                        p[j][k] = ::std::min(p[j][k], p[j][i]+p[i][k]);
+                    }
+                }
+            }
+        }
+        int shortestPathLength(std::vector<std::vector<int>>& gr){
+            int size = gr.size();
+            std::vector<std::vector<int>> g(size, std::vector<int>(size, INT_MAX>>1));
+            for(int i=0; i<size; ++i){
+                g[i][i] = 0;
+                for(auto &n : gr[i]){
+                    g[i][n] = 1;
+                    g[n][i] = 1;
+                }
+            }
+            floyd(g);
+#ifdef debug
+    for(int i=0; i<size; ++i){
+        for(int j=0; j<size; ++j){
+           std::cout<<g[i][j]<<"--";
+        }
+        std::cout<<std::endl;
+    }
+    std::cout<<std::endl;
+#endif
+            std::vector<std::vector<int>> dp((1<<size), std::vector<int>(size+1, INT_MAX>>1));
+            for(int i=0; i<size; ++i){
+                dp[1<<i][i] = 0;
+            }
+            for(int state=0; state<(1<<size); ++state){
+                for(int i=0; i<size; ++i){
+                    for(int j=0; j<size; ++j){
+                        if(!(state&(1<<j)))continue;
+                        if(!g[i][j])continue;
+                        dp[state|(1<<i)][i]  = std::min(dp[state|(1<<i)][i], dp[state][j]+g[j][i]);
+                    }
+                }
+            }
+#ifdef debug
+    for(int i=0; i<size; ++i){
+        std::cout<<dp[(1<<size)-1][i]<<"--";
+    }
+    std::cout<<std::endl;
+#endif
+            int res = INT_MAX;
+            for(int i=0; i<=size; ++i){
+                res = std::min(dp[(1<<size)-1][i], res);
+            }
+            return res;
+        }
+
+//有 A 和 B 两种类型的汤。一开始每种类型的汤有 N 毫升。有四种分配操作：
+//提供 100ml 的汤A 和 0ml 的汤B。
+//提供 75ml 的汤A 和 25ml 的汤B。
+//提供 50ml 的汤A 和 50ml 的汤B。
+//提供 25ml 的汤A 和 75ml 的汤B。
+//当我们把汤分配给某人之后，汤就没有了。每个回合，我们将从四种概率同为0.25的操作中进行分配选择。如果汤的剩余量不足以完成某次操作，我们将尽可能分配。当两种类型的汤都分配完时，停止操作。
+//注意不存在先分配100 ml汤B的操作。
+//需要返回的值： 汤A先分配完的概率 + 汤A和汤B同时分配完的概率 / 2。
+        double soupServings(int N){
+#define index(n) ((n)>=0?(n):0)
+            N = N/25+(N%25?1:0);
+            if(N>=500)return 1.0;
+            std::vector<std::vector<double>> dp(N+1, std::vector<double>(N+1, 0));
+            dp[0][0] = 0.5;
+            for(int i=1; i<=N; ++i)dp[0][i] = 1.0;
+            for(int i=1; i<=N; ++i){
+                for(int j=1; j<=N; ++j){
+                    dp[i][j] = (dp[index(i-4)][index(j)]   + dp[index(i-3)][index(j-1)] +
+                                dp[index(i-2)][index(j-2)] + dp[index(i-1)][index(j-3)]) * 0.25;
+                }
+            }
+            return dp[N][N];
+        }
+
+//也就是说，如果比较符号在子数组中的每个相邻元素对之间翻转，则该子数组是湍流子数组。 返回 A 的最大湍流子数组的长度。
+        int maxTurbulanceSize(std::vector<int>& A){
+            int size = A.size();
+            if(size<=2)return size;
+            int res  = 0;
+            int dp_0 = 1, dp_1 = 1;
+            for(int i=1; i<size; ++i){
+                int t0 = 1 + (A[i]>A[i-1]?dp_0:0);
+                int t1 = 1 + (A[i]<A[i-1]?dp_1:0);
+                res    = ::std::max(res, dp_0=t1);
+                res    = ::std::max(res, dp_1=t0);
+            }
+            return res;
+        }
+//有 n 位乘客即将登机，飞机正好有 n 个座位。第一位乘客的票丢了，他随便选了一个座位坐下。 剩下的乘客将会： 如果他们自己的座位还空着，就坐到自己的座位上， 当他们自己的座位被占用时，随机选择其他座位 第 n 位乘客坐在自己的座位上的概率是多少？
+        double nthPersonGetsNthSeat(int n){
+            return n==1?1.0:0.5;
+        }
+//给定一个正整数 n，返回长度为 n 的所有可被视为可奖励的出勤记录的数量。 答案可能非常大，你只需返回结果mod 109 + 7的值。
+//学生出勤记录是只包含以下三个字符的字符串：
+//'A' : Absent，缺勤
+//'L' : Late，迟到
+//'P' : Present，到场
+//如果记录不包含多于一个'A'（缺勤）或超过两个连续的'L'（迟到），则该记录被视为可奖励的
+        int checkRecord(int n){
+            long long MOD = 1e9 + 7;
+            long long dp_0_0 = 1;
+            long long dp_0_1 = 1;
+            long long dp_0_2 = 0;
+            long long dp_1_0 = 1;
+            long long dp_1_1 = 0;;
+            long long dp_1_2 = 0;
+            for(int i=2; i<=n; ++i){
+                long long t00 = dp_0_0;
+                long long t01 = dp_0_1;
+                long long t02 = dp_0_2;
+                long long t10 = dp_1_0;
+                long long t11 = dp_1_1;
+                long long t12 = dp_1_2;
+                // + P
+                dp_0_0 = (t00 + t01 + t02) % MOD;
+                dp_1_0 = (t10 + t11 + t12) % MOD;
+
+                //+ L
+                dp_0_1 = t00;
+                dp_0_2 = t01;
+                dp_1_1 = t10;
+                dp_1_2 = t11;
+
+                //+ A
+                dp_1_0 = (dp_1_0 + t00 + t01 + t02) % MOD;
+            }
+            return (dp_0_0 + dp_0_1 + dp_0_2 + dp_1_0 + dp_1_1 + dp_1_2) % MOD;
+        }           
+
+//给出两个整数 n 和 k，找出所有包含从 1 到 n 的数字，且恰好拥有 k 个逆序对的不同的数组的个数。
+//逆序对的定义如下：对于数组的第i个和第 j个元素，如果满i < j且 a[i] > a[j]，则其为一个逆序对；否则不是。
+        int kInversePains(int n, int k){
+            std::vector<std::vector<int>> dp(n+1, std::vector<int>(k+1, 0));
+            for(int i=1; i<=n; ++i)dp[i][0] = 1;
+            int MOD = 1e9 + 7;
+            for(int i=2; i<=n; ++i){
+                for(int j=1; j<=k; ++j){
+                    dp[i][j] = (dp[i][j-1] % MOD + (dp[i-1][j] - (j >= i ? dp[i-1][j-i] : 0) + MOD) % MOD) % MOD;
+                }
+            }
+            return dp[n][k] % MOD;
+        }
+
+//如果一个数列至少有三个元素，并且任意两个相邻元素之差相同，则称该数列为等差数列。
+        int numberOfArithmeticSlices(std::vector<int>& A){
+            int size = A.size();
+            if(size<=2)return 0;
+            std::vector<std::unordered_map<long long, int>> dp(size);
+            int res = 0;
+            for(int i=1; i<size; ++i){
+                for(int j=0; j<i; ++j){
+                    long long d     = (long long)A[i] - (long long)A[j];
+                    int sum         = dp[j].count(d)?dp[j][d]:0;
+                    res            += sum;
+                    dp[i][d]       += sum + 1;
+                }
+            }
+            return res;
+        }
+        int numberOfArithmeticSlices_dfs(std::vector<int>& A){
+            int size = A.size();
+            if(size<=2)return 0;
+            std::vector<int> nums;
+            return dfs(0, size, nums, A);
+        }
+        int dfs(int d, int size, std::vector<int>& nums, std::vector<int>& A){
+            if(d == size){
+                if(nums.size() < 3){
+                    return 0;
+                }
+                int t = nums[1] - nums[0];
+                for(int i=2; i<nums.size(); ++i){
+                    if(nums[i] - nums[i-1] != t){
+                        return 0;
+                    }
+                }
+                return 1;
+            }
+            nums.push_back(A[d]);
+            int a = dfs(d+1, size, nums, A);
+            nums.pop_back();
+            return a+dfs(d+1, size, nums, A);
+        }
+//给定一个未排序的整数数组，找到最长递增子序列的个数
+        int findNumberOfLIS(std::vector<int>& nums) {
+            int size = nums.size();
+            std::vector<int> dp_1(size, 1);
+            std::vector<int> dp_2(size, 1);
+            for(int i=0; i<size; ++i){
+                for(int j=i; j>=0; --j){
+                    if(nums[i]>nums[j]){
+                        if(dp_1[j] >= dp_1[i]){
+                            dp_1[i] = dp_1[j] + 1;
+                            dp_2[i] = dp_2[j];
+                        }else if(dp_1[j] + 1 == dp_1[i]){
+                            dp_2[i] += dp_2[j];
+                        }
+                    }
+                }
+            }
+#ifdef debug
+            for(int i=0; i<size; ++i){
+                std::cout<<dp_1[i]<<"--"<<dp_2[i]<<std::endl;
+            }
+#endif
+            int max_v = *max_element(dp_1.begin(), dp_1.end());
+            int res   = 0;
+            for(int i=0; i<size; ++i){
+                if(dp_1[i] == max_v){
+                    res += dp_2[i];
+                }
+            }
+
+            return res;
+        }
+//给定一个 m × n 的网格和一个球。球的起始坐标为 (i,j) ，你可以将球移到相邻的单元格内，或者往上、下、左、右四个方向上移动使球穿过网格边界。但是，你最多可以移动 N 次。找出可以将球移出边界的路径数量。答案可能非常大，返回 结果 mod 109 + 7 的值
+        int findPath(int m, int n, int N, int I, int J){
+            int MOD = 1e9 + 7;
+            std::vector<std::vector<long long>> dp_0(m+2, std::vector<long long>(n+2, 1));
+            std::vector<std::vector<long long>> dp_1(m+2, std::vector<long long>(n+2, 1));
+            for(int i=1; i<=m; ++i)fill(dp_0[i].begin()+1, dp_0[i].end()-1, 0);
+            for(int k=0; k<N; ++k){
+                for(int i=1; i<=m; ++i){
+                    for(int j=1; j<=n; ++j){
+                        dp_1[i][j] = (dp_0[i+1][j] + dp_0[i-1][j]+
+                                      dp_0[i][j+1] + dp_0[i][j-1]) % MOD;
+                    }
+                }
+                dp_0 = dp_1;
+            }
+            return !N ? 0 : dp_0[++I][++J];
+        }
+        int findPath_dfs(int m, int n, int N, int i, int j){
+            if(N<0)return 0;
+            if(i<0 || i>=m || j<0 || j>=n)return 1;
+            if(N==0)return 0;
+            int a = findPath_dfs(m, n, N-1, i+1, j);
+            a    += findPath_dfs(m, n, N-1, i-1, j);
+            a    += findPath_dfs(m, n, N-1, i, j+1);
+            a    += findPath_dfs(m, n, N-1, i, j-1);
+            return a;
+        }
+//已知一个 NxN 的国际象棋棋盘，棋盘的行号和列号都是从 0 开始。即最左上角的格子记为 (0, 0)，最右下角的记为 (N-1, N-1)。  现有一个 “马”（也译作 “骑士”）位于 (r, c) ，并打算进行 K 次移动。 
+        double knightProbability(int N, int K, int r, int c){
+            std::vector<std::vector<double>> dp_0(N+4, std::vector<double>(N+4, 0));
+            std::vector<std::vector<double>> dp_1(N+4, std::vector<double>(N+4, 0));
+            for(int i=2; i<=N+1; ++i)fill(dp_0[i].begin()+2, dp_0[i].end()-2, 1);
+            for(int k=0; k<K; ++k){
+                for(int i=2; i<=N+1; ++i){
+                    for(int j=2; j<=N+1; ++j){
+                        dp_1[i][j] = (dp_0[i-1][j+2] + dp_0[i-1][j-2]+
+                                      dp_0[i-2][j+1] + dp_0[i-2][j-1]+
+                                      dp_0[i+1][j+2] + dp_0[i+1][j-2]+
+                                      dp_0[i+2][j+1] + dp_0[i+2][j-1]) / 8;
+                    }
+                }
+                dp_0 = dp_1;
+#ifdef debug
+   for(int i=0; i<=N+3; ++i){
+       for(int j=0; j<=N+3; ++j){
+           std::cout<<dp_0[i][j]<<"--";
+       }
+       std::cout<<std::endl;
+   }
+std::cout<<"________________________"<<std::endl;
+#endif
+            }
+            return dp_0[r+2][c+2];
+        }
+        double knightProbability1(int N, int K, int r, int c){
+            return (knightProbability_dfs(N, K, r, c)*1.)/(pow(8, K));
+        }
+        int knightProbability_dfs(int N, int K, int r, int c){
+            if(r<0 || r>=N || c<0 || c>=N)return 0;
+            if(!K) return 1; 
+            int a = knightProbability_dfs(N, K-1, r-1, c+2);
+            a    += knightProbability_dfs(N, K-1, r-1, c-2);
+            a    += knightProbability_dfs(N, K-1, r-2, c+1);
+            a    += knightProbability_dfs(N, K-1, r-2, c-1);
+            a    += knightProbability_dfs(N, K-1, r+1, c+2);
+            a    += knightProbability_dfs(N, K-1, r+1, c-2);
+            a    += knightProbability_dfs(N, K-1, r+2, c+1);
+            a    += knightProbability_dfs(N, K-1, r+2, c-1);
+            return a;
+        }
+
+//爱丽丝参与一个大致基于纸牌游戏 “21点” 规则的游戏，描述如下：
+//爱丽丝以 0 分开始，并在她的得分少于 K 分时抽取数字。 抽取时，她从 [1, W] 的范围中随机获得一个整数作为分数进行累计，其中 W 是整数。 每次抽取都是独立的，其结果具有相同的概率。
+//当爱丽丝获得不少于 K 分时，她就停止抽取数字。 爱丽丝的分数不超过 N 的概率是多少？
+        double new21Game(int N, int K, int M){
+            std::vector<double> dp(N+M+1, 0);
+            for(int i=K; i<=N; ++i)dp[i] = 1;
+            double p = 0;
+            for(int i=K; i<K+M; ++i)p += dp[i];
+            for(int i=K-1; i>=0; --i){
+                dp[i] = p/M;
+                p += dp[i];
+                p -= dp[i+M];
+            }
+            return dp[0];
+        }
+//每一层所摆放的书的最大高度就是这一层书架的层高，书架整体的高度为各层高之和。
+//以这种方式布置书架，返回书架整体可能的最小高度。
+        int minHeightShelves(std::vector<std::vector<int>>& books, int s){
+            int size = books.size();
+            int t = s, h = 0;
+            std::vector<int> dp(size+1, INT_MAX>>1);
+            dp[0]    = 0;
+            for(int i=1; i<=size; ++i){
+                t = s;
+                h = 0;
+                for(int j=i-1; j>=0; --j){
+                    t    -= books[j][0];
+                    if(t<0)break;
+                    h     = std::max(h, books[j][1]);
+                    dp[i] = ::std::min(dp[i], dp[j]+h);
+                }
+            }
+            return dp[size];
+        }
+};                  
+                    
 int main(int argc,const char *argv[]){
     Solution te;
-    ::std::vector<::std::vector<int>> h = {
-{ 1,2,3,4 },{ 1,2,3,4 },{ 1,2,3,4 },{ 1,2,3,4 }
-        //{3,5,1},
-        //{3,5},
-        //{3,4},
-        //{4,5},
+    //int N = 3; int K = 2; int r = 0; int c = 0;
+    int N = 16; int K = 12; int r = 2; int c = 3;
+    ::std::cout<<te.knightProbability(N, K, r, c)<<::std::endl;
+    //std::vector<int> p = {1,3,5,1,3,5};
+    //std::vector<int> p = {1,3,5,4,71,31,3,5,4,7,1,3,5,4,7,5,1,3,5};
+    //std::vector<int> p = {1,1,1,1,1,1};
+    //te.findNumberOfLIS(p);
+//[[1],[0,2,6],[1,3],[2],[5],[4,6],[1,5,7],[6]]
+    //std::vector<std::vector<int>> gr = {
+        //{1},
+        //{0, 2, 6},
+        //{1, 3},
+        //{2},
         //{5},
-    };
-    te.numberWays(h);
+        //{4, 6},
+        //{1, 5, 7},
+        //{6},
+    //};
+    //te.shortestPathLength(gr);
+    //::std::vector<::std::vector<int>> h = {
+//{ 1,2,3,4 },{ 1,2,3,4 },{ 1,2,3,4 },{ 1,2,3,4 }
+        ////{3,5,1},
+        ////{3,5},
+        ////{3,4},
+        ////{4,5},
+        ////{5},
+    //};
+    //te.numberWays(h);
     //int x      = 3;
     //int target = 19;
     //::std::cout<<te.leastOpsExpressTarget(x, 1452)<<::std::endl;

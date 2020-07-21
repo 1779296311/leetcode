@@ -31,7 +31,7 @@ class Solution{
             for(int i=0; i<size; ++i){
                 while(R<size && sum+sums[R]<=k){
                     sum = sum + sums[R];
-                    R   = ends[R]+1;
+                    R   = ends[R] + 1;
                 }
                 __res = max(__res,R-i);
                 if(R>i){
@@ -47,7 +47,7 @@ class Solution{
 };
 int main(int argc,const char *argv[]){
     Solution te;
-    int nums[] = {1,4,-5,0,0,0,0,0,700,-2,-3,0};
-    cout<<te.max_lessK_array(nums,7,*(&nums+1)-nums)<<endl;
+    int nums[] = {1,1,1,50,-4,0,-60,0,0,0,-1,13,0};
+    cout<<te.max_lessK_array(nums,0,*(&nums+1)-nums)<<endl;
     return 0;
 }

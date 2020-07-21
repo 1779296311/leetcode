@@ -37,6 +37,14 @@ struct Info1{
     Info1(int a, int b,int n,ListNode* m):
         minV(a),maxV(b),maxNum(n),maxSearchHead(m){}
 };
+struct TreeNode {
+     int val;
+     TreeNode *left;
+     TreeNode *right;
+     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ };
 class Solution{
     public:
         ListNode *commonAncestor_1(ListNode *root, ListNode *a, ListNode *b){
@@ -271,6 +279,28 @@ class Solution{
     }
     int get_max_distance(ListNode *head){
         return max_distance(head).maxDistance;
+    }
+//给定一个二叉树，编写一个函数来获取这个树的最大宽度。树的宽度是所有层中的最大宽度。这个二叉树与满二叉树（full binary tree）结构相同，但一些节点为空。
+//每一层的宽度被定义为两个端点（该层最左和最右的非空节点，两端点间的null节点也计入长度）之间的长度。
+    int widthOfBinaryTree_try(TreeNode* root){
+        std::queue<std::pair<TreeNode*,int>> q;
+        q.push({root , 0});
+        int res = 0;
+        int s,e,sub;
+        while(q.size()){
+             s = e = sub = 0;
+            int size = q.size();
+            for(int i=0; i<size; ++i){
+                auto [tmp, n] = q.front();
+                q.pop();
+                if(!i)s = sub = n;
+                if(i==size-1)e = n;
+                if(tmp->left) q.push({tmp->left,  n*2+1-sub});
+                if(tmp->right)q.push({tmp->right, n*2+2-sub});
+            }
+            res = std::max(res, e-s+1);
+        }
+        return res;
     }
 };
 

@@ -9,6 +9,8 @@
 #include <bitset>
 #include <vector>
 #include <unordered_map>
+#include <numeric>
+#include <algorithm>
 #include <unordered_set>
 #include <stdlib.h>
 #include <climits>
@@ -29,6 +31,13 @@ class Solution{
             sum -= Min;
             sum -= Max;
             return sum/(size-2)*1.0;
+        }
+        double average_better(std::vector<int>& salary){
+            if(salary.size()<=2)return 0;
+            int max_v = *max_element(salary.begin(), salary.end());
+            int min_v = *min_element(salary.begin(), salary.end());
+            int sum   = std::accumulate(salary.begin(), salary.end(), 0);
+            return (sum-max_v-min_v)/salary.size();
         }
 
 //给你两个正整数 n 和 k 。
@@ -100,8 +109,7 @@ class Solution{
                 while(count>k){
                     if(!nums[l++])--count;
                 }
-                res = ::std::max(res, r-l+1-k);
-                ++r;
+                res = ::std::max(res, r++-l+1-k);
             }
             return res;
         }

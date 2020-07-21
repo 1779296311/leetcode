@@ -64,9 +64,9 @@ class LIAN{
             st.push(root);
             while(!st.empty()){
                 int h  = st.front();
+                st.pop();
                 ::std::cout<<h<<::std::endl;
                 vis[h] = true;
-                st.pop();
                 for(int i=head[h]; ~i; i=edgs[i].next){
                     if(!vis[edgs[i].to]){
                         st.push(edgs[i].to);
@@ -76,6 +76,7 @@ class LIAN{
         }
 };
 class LCA{
+//即最近公共祖先，是指这样一个问题：在有根树中，找出某两个结点u和v最近的公共祖先
     private:
         int head[100];
         int vis[100];

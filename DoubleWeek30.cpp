@@ -9,6 +9,7 @@
 #include <sstream>
 #include <algorithm>
 #include <queue>
+#include <numeric>
 #include <vector>
 #include <unordered_map>
 #include <string>
@@ -41,29 +42,6 @@ class Solution{
 
             return s3 + "-" + s2 + "-" + s1;
         }
-//给你一个数组 nums ，它包含 n 个正整数。你需要计算所有非空连续子数组的和，并将它们按升序排序，得到一个新的包含 n * (n + 1) / 2 个数字的数组。
-//请你返回在新数组中下标为 left 到 right （下标从 1 开始）的所有数字和（包括左右端点）。由于答案可能很大，请你将它对 10^9 + 7 取模后返回。
-        int rangeSum(::std::vector<int>& nums, int n, int left, int right){
-            ::std::vector<::std::vector<int>> sum(n+1, ::std::vector<int>(n+1, 0));
-            ::std::priority_queue<int, ::std::vector<int>, ::std::greater<int>> q;
-            for(int i=1; i<=n; ++i){
-                for(int j=i; j<=n; ++j){
-                    sum[i][j] += sum[i][j-1] + nums[j];
-                    q.push(sum[i][j]);
-                }
-            }
-            while(left--){
-                q.pop();
-            }
-            int res = 0;
-            int num = right - left + 1;
-            while(right--){
-                res += q.top();
-                res %= 1000000007;
-                q.pop();
-            }
-            return res % 1000000007;
-        }
 //给你一个数组 nums ，每次操作你可以选择 nums 中的任意一个数字并将它改成任意值。
 //请你返回三次操作后， nums 中最大值与最小值的差的最小值。
         int minDifference(::std::vector<int>& nums){
@@ -89,4 +67,95 @@ class Solution{
             }
             return dp[0];
         }
+//给你一个数组 nums ，它包含 n 个正整数。你需要计算所有非空连续子数组的和，并将它们按升序排序，得到一个新的包含 n * (n + 1) / 2 个数字的数组。
+//请你返回在新数组中下标为 left 到 right （下标从 1 开始）的所有数字和（包括左右端点）。由于答案可能很大，请你将它对 10^9 + 7 取模后返回。
+        int rangeSum(::std::vector<int>& nums, int n, int left, int right){
+            ::std::vector<::std::vector<int>> sum(n+1, ::std::vector<int>(n+1, 0));
+            ::std::priority_queue<int, ::std::vector<int>, ::std::greater<int>> q;
+            for(int i=1; i<=n; ++i){
+                for(int j=i; j<=n; ++j){
+                    sum[i][j] += sum[i][j-1] + nums[j];
+                    q.push(sum[i][j]);
+                }
+            }
+            while(left--){
+                q.pop();
+            }
+            int res = 0;
+            int num = right - left + 1;
+            while(right--){
+                res += q.top();
+                res %= 1000000007;
+                q.pop();
+            }
+            return res % 1000000007;
+        }
+        int rangeSum_better(::std::vector<int>& nums, int n, int start, int end){
+            auto find_subarr_num = [&](int target)->::std::pair<int, long>{
+                int  all  = 0; long sum   = 0;
+                int  num  = 0; long total = 0;
+                for(int right=0,left=0; right<nums.size(); ++right){
+                    all += nums[right];
+                    sum += (right-left+1) * nums[right];
+                    while(all > target){
+                        sum -= all;
+                        all -= nums[left++];
+                    }
+                    num   += right-left+1;
+                    total += sum;
+                }
+                return {num, total};
+            };
+            int min_num = *min_element(nums.begin(), nums.end());
+            int max_num = accumulate(nums.begin(),nums.end(),0) +1;
+            auto binary_search = [&](int index)->int{
+                if(!index)return 0;
+                int left  = min_num;
+                int right = max_num;
+                while(left < right){
+                    int m = left + ((right-left)>>1);
+                    auto [n,sum] = find_subarr_num(m);
+                    if(n>=index){
+                        right = m;
+                    }else if(n<index){
+                        left  = m+1;
+                    }
+                }
+                auto [n,sum] = find_subarr_num(left);
+                return sum - left*(n-index);
+            };
+
+#ifdef debug            
+            ::std::vector<::std::vector<int>> sum(n+1, ::std::vector<int>(n+1, 0));
+            ::std::priority_queue<int, ::std::vector<int>, ::std::greater<int>> q;
+            for(int i=1; i<=n; ++i){
+                for(int j=i; j<=n; ++j){
+                    sum[i][j] += sum[i][j-1] + nums[j-1];
+                    q.push(sum[i][j]);
+                }
+            }
+            int t = end + 1;
+            while(q.size() && t--){
+                ::std::cout<<q.top()<<"--";
+                q.pop();
+            }
+            ::std::cout<<::std::endl;
+        ::std::cout<<binary_search(end)<<"--"<<binary_search(start-1)<<::std::endl;
+        //::std::cout<<n2<<"--"<<s2<<::std::endl;
+#endif
+            constexpr int MOD = 1e9+7;
+            return (binary_search(end)-binary_search(start-1)) % MOD;
+        }
 };
+int main(int argc,const char *argv[]){
+    Solution te;;
+    //::std::vector<int> nums = {1,2,3,3,4,5,6,7,8,9,10};
+    ::std::vector<int> nums = {1,2,3,4,3,6,1,2,3,4};
+    //::std::vector<int> nums = {1,2,3,4};
+    ::std::cout<<te.rangeSum_better(nums,nums.size(),3,7)<<::std::endl;
+    ::std::cout<<te.rangeSum_better(nums,nums.size(),4,16)<<::std::endl;
+    ::std::cout<<te.rangeSum_better(nums,nums.size(),5,15)<<::std::endl;
+    ::std::cout<<te.rangeSum_better(nums,nums.size(),2,12)<<::std::endl;
+    ::std::cout<<te.rangeSum_better(nums,nums.size(),1,12)<<::std::endl;
+    return 0;
+}
