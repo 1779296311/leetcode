@@ -15,9 +15,23 @@
 #include <vector>
 #include <climits>
 #include <numeric>
+#include <bitset>
 #include <algorithm>
 #include <cmath>
 #include <stdlib.h>
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 class Solution{
     public:
 //给定一个整数 n，求以 1 ... n 为节点组成的二叉搜索树有多少种？
@@ -31,7 +45,27 @@ class Solution{
             }
             return dp[n];
         }
-
+        std::vector<TreeNode*> generateTrees(int n) {
+            if(!n)return {};
+            return dfs(1, n);
+        }
+        std::vector<TreeNode*> dfs(int s, int e){
+            if(s > e)return {nullptr};
+            std::vector<TreeNode*> res;
+            for(int i=s; i<=e; ++i){
+                std::vector<TreeNode*> L = dfs(s, i-1);
+                std::vector<TreeNode*> R = dfs(i+1, e);
+                for(auto &l : L){
+                    for(auto &r : R){
+                        TreeNode *root = new TreeNode(i);
+                        root->left  = l;
+                        root->right = r;
+                        res.emplace_back(root);
+                    }
+                }
+            }
+            return res;
+        }
 //给你一个由若干 0 和 1 组成的二维网格 grid，请你找出边界全部由 1 组成的最大 正方形 子网格，并返回该子网格中的元素数量。如果不存在，则返回 0。
         int largestBorderSquare(::std::vector<::std::vector<int>>& grid){
             int n = grid.size();
@@ -1081,7 +1115,8 @@ class Solution{
             for(int i=1; i<size; ++i){
                 for(int j=0; j<i; ++j){
                     long long d     = (long long)A[i] - (long long)A[j];
-                    int sum         = dp[j].count(d)?dp[j][d]:0;
+                    //int sum         = dp[j].count(d)?dp[j][d]:0;
+                    int sum         = dp[j][d];
                     res            += sum;
                     dp[i][d]       += sum + 1;
                 }
@@ -1240,22 +1275,624 @@ std::cout<<"________________________"<<std::endl;
             for(int i=1; i<=size; ++i){
                 t = s;
                 h = 0;
-                for(int j=i-1; j>=0; --j){
-                    t    -= books[j][0];
-                    if(t<0)break;
+                for(int j=i-1; j>=0 && (t -= books[j][0])>=0; --j){
                     h     = std::max(h, books[j][1]);
                     dp[i] = ::std::min(dp[i], dp[j]+h);
                 }
             }
             return dp[size];
         }
-};                  
-                    
+//-----------------------------514--------------------------------------------
+        int findRorateSteps_dfs(std::string& ring, std::string& key){
+            std::vector<std::vector<int>> dp(ring.length()+5, std::vector<int>(key.length(), -1));
+            return dfs(dp, ring,key, 0, 0) + key.length();
+        }
+        int dfs(std::vector<std::vector<int>>& dp, std::string& ring, std::string& key, int r, int k){
+            if(k>=key.length())return 0;
+
+            if(dp[r][k] !=-1)return dp[r][k];
+
+            int r1 = r;
+            int r2 = r;
+            int n1 = 0;
+            int n2 = 0;
+
+            while(ring[r1]!=key[k] && ++n1)r1 = (r1+1)%ring.length();
+            while(ring[r2]!=key[k] && ++n2)r2 = (r2-1+ring.length())%ring.length();
+
+            int a  = dfs(dp, ring, key, r1, k+1) + n1;
+            int b  = dfs(dp, ring, key, r2, k+1) + n2;
+
+            return dp[r][k] = std::min(a,b);
+        }
+//作为项目经理，你规划了一份需求的技能清单 req_skills，并打算从备选人员名单 people 中选出些人组成一个「必要团队」（ 编号为 i 的备选人员 people[i] 含有一份该备选人员掌握的技能列表）。 所谓「必要团队」，就是在这个团队中，对于所需求的技能列表 req_skills 中列出的每项技能，团队中至少有一名成员已经掌握。 我们可以用每个人的编号来表示团队中的成员：例如，团队 team = [0, 1, 3] 表示掌握技能分别为 people[0]，people[1]，和 people[3] 的备选人员。 请你返回 任一 规模最小的必要团队，团队成员用人员编号表示。你可以按任意顺序返回答案，本题保证答案存在。 
+        std::vector<int> smallestSufficientTeam(std::vector<std::string>& s,
+                std::vector<std::vector<std::string>>& p){
+            int size_s = s.size();
+            int size_p = p.size();
+            std::unordered_map<std::string, int> mp;
+            std::unordered_map<int, std::vector<int>> res;
+            for(int i=0; i<size_s; ++i)mp[s[i]] = i;
+            std::vector<int> dp((1<<size_s), -1);
+            dp[0]  = 0;
+            res[0] = {};
+            for(int i=0; i<size_p; ++i){
+                int f = 0;
+                for(auto &n : p[i]){
+                    if(mp.count(n))f |= (1<<mp[n]);
+                }
+                for(int j=0; j<(1<<size_s); ++j){
+                    if(dp[j]>=0){
+                        int state = f | j;
+                        if(dp[state]==-1 || dp[state] > dp[j] + 1){
+                            dp[state]  = dp[j] + 1;
+                            res[state] = res[j];
+                            res[state].push_back(i);
+                        }
+                    }
+                }
+            }
+            return res[(1<<size_s)-1];
+        }
+        std::vector<int> smallestSufficientTeam_fuck(std::vector<std::string>& s,
+                                    std::vector<std::vector<std::string>>& p){
+            int size_s = s.size();
+            int size_p = p.size();
+            std::unordered_map<std::string, int> mp;
+            for(int i=0; i<size_s; ++i)mp[s[i]] = i;
+            std::vector<int> peo(size_p);
+            for(int i=0; i<size_p; ++i){
+                for(auto &n : p[i]){
+                    if(mp.count(n))peo[i] |= (1<<mp[n]);
+                }
+            }
+            std::vector<std::vector<unsigned long long>> dp((1<<size_s), std::vector<unsigned long long>(size_p, INT_MAX>>1));
+            fill(dp[0].begin(), dp[0].end(), 0);
+            unsigned long long e = 1;
+            for(int state=0; state<(1<<size_s); ++state){
+                for(int i=0; i<size_p; ++i){
+                    dp[peo[i]][i] = (e<<i);
+                    if((state&peo[i])==peo[i])continue;
+                    for(int j=0; j<size_p; ++j){
+                        if(i==j)continue;
+                        if((state & peo[j]) != peo[j])continue;
+                        int t1 = __builtin_popcount(dp[state][j])+1;
+                        int t  = __builtin_popcount(dp[state|peo[i]][i]);
+                        if(t>t1)dp[state|peo[i]][i] = (dp[state][j] | (e<<i));
+                    }
+                }
+            }
+#ifdef debug
+   for(int i=0; i<(1<<size_s); ++i){
+       for(int j=0; j<size_p; ++j){
+           std::cout<<dp[i][j]<<"---";
+       }
+       std::cout<<std::endl;
+   }
+#endif
+            std::vector<int> res;
+            int t = *min_element(dp[(1<<size_s)-1].begin(), dp[(1<<size_s)-1].end(), [](unsigned long long a, unsigned long long b){
+                    return __builtin_popcount(a) < __builtin_popcount(b);
+                    });
+            for(int i=0; i<64; ++i)if(t&(e<<i))res.push_back(i);
+            return res;
+        }
+
+//给出 n 个数对。 在每一个数对中，第一个数字总是比第二个数字小。 现在，我们定义一种跟随关系，当且仅当 b < c 时，数对(c, d) 才可以跟在 (a, b) 后面。我们用这种形式来构造一个数对链。 给定一个对数集合，找出能够形成的最长数对链的长度。你不需要用到所有的数对，你可以以任何顺序选择其中的一些数对来构造。
+        int findLongestChain(std::vector<std::vector<int>>& pairs){
+            int size = pairs.size();
+            std::sort(pairs.begin(), pairs.end());
+            std::vector<int> dp(size, 1);
+            for(int i=1; i<size; ++i){
+                for(int j=0; j<i; ++j){
+                    if(pairs[i][0] > pairs[j][1]){
+                        dp[i]  = std::max(dp[i], dp[j] + 1);
+                    }
+                }
+            }
+            int res = *std::max_element(dp.begin(), dp.end());
+            return res;
+        }
+        int findLongestChain_better(std::vector<std::vector<int>>& p){
+            int size = p.size();
+            std::sort(p.begin(), p.end(), [](const auto& a, const auto& b){
+                    return 1[a] < 1[b] || (1[a]==1[b] && 0[a]<0[b]);
+            });
+            int res = 1;
+            int e   = p[0][1];
+            for(auto &n : p){
+                if(e < n[0]){
+                    e = n[1];
+                    ++res;
+                }
+            }
+            return res;
+        }
+//我们将给定的数组 A 分成 K 个相邻的非空子数组 ，我们的分数由每个子数组内的平均值的总和构成。计算我们所能得到的最大分数是多少。 注意我们必须使用 A 数组中的每一个数进行分组，并且分数不一定需要是整数。
+        double largestSumOfAverages(std::vector<int>& A, int K){
+            int size  = A.size();
+            std::vector<double> dp(size, 0);
+            std::vector<int> sum(A);
+
+            for(int i=1; i<size; ++i)sum[i] += sum[i-1];
+            for(int i=0; i<size; ++i)dp[i]   = sum[i]/(i+1);
+
+            for(int k=2; k<=K; ++k){
+                for(int i=size-1; i>=k-1; --i){
+                    for(int j=k-1; j<i; ++j){
+                        dp[i] = std::max(dp[i], dp[j]+(sum[i]-sum[j])/(i-j));
+                    }
+                }
+            }
+            return dp[size-1];
+        }
+//有一个骰子模拟器会每次投掷的时候生成一个 1 到 6 的随机数。 不过我们在使用它时有个约束，就是使得投掷骰子时，连续 掷出数字 i 的次数不能超过 rollMax[i]（i 从 1 开始编号）。 现在，给你一个整数数组 rollMax 和一个整数 n，请你来计算掷 n 次骰子可得到的不同点数序列的数量。 假如两个序列中至少存在一个元素不同，就认为这两个序列是不同的。由于答案可能很大，所以请返回 模 10^9 + 7 之后的结果。
+        int dieSimulator(int n, std::vector<int> r){
+            int MOD   = 1e9 + 7;
+            int size  = r.size();
+            int max_s = *max_element(r.begin(), r.end());
+            std::vector<std::vector<int>> dp_0(6, std::vector<int>(max_s+1, 0));
+            std::vector<std::vector<int>> dp_1(6, std::vector<int>(max_s+1, 0));
+            for(int i=0; i<6; ++i)dp_0[i][1] = 1;
+            for(int i=1; i<n; ++i){
+                for(int now=0; now<6; ++now){
+                    dp_1[now][0] = 0;
+                    for(int pre=0; pre<6; ++pre){
+                        if(now == pre){
+                            for(int t=1; t<r[pre]; ++t){
+                                dp_1[now][t+1] = dp_0[pre][t];
+                            }
+                        }else{
+                            for(int t=1; t<=r[pre]; ++t){
+                                dp_1[now][1] = (dp_1[now][1] + dp_0[pre][t]) % MOD;
+                            }
+                        }
+                    }
+                }
+                dp_0 = dp_1;
+            }
+            int res = 0;
+            for(int i=0; i<6; ++i){
+                for(int j=1; j<=r[i]; ++j){
+                    res = (res + dp_0[i][j]) % MOD;
+                }
+            }
+            return res % MOD;
+        }
+//里有 n 份兼职工作，每份工作预计从 startTime[i] 开始到 endTime[i] 结束，报酬为 profit[i]。 给你一份兼职工作表，包含开始时间 startTime，结束时间 endTime 和预计报酬 profit 三个数组，请你计算并返回可以获得的最大报酬。
+    int jobScheduling(std::vector<int>& s, 
+                      std::vector<int>& e, 
+                      std::vector<int>& pro) {
+        int size = s.size();
+        std::vector<int> pre(size+1, -1);
+        std::vector<int> dp(size+1, 0);
+        std::vector<int> job(size, 0);
+        std::iota(job.begin(), job.end(), 0);
+        std::sort(job.begin(), job.end(), [&](const auto& a, const auto& b){
+                return e[a] < e[b];
+        });
+        for(int i=1; i<size; ++i){
+            for(int j=i; j>=0; --j){
+                if(e[job[j]] <= s[job[i]]){
+                    pre[i] = j;
+                    break;
+                }
+            }
+        }
+        dp[0] = pro[job[0]];
+        for(int i=1; i<=size; ++i){
+            int t = pre[i]==-1?0:dp[pre[i]];
+            dp[i] = std::max(dp[i-1], t + pro[job[i]]);
+        }
+        return dp[size-1];
+    }
+
+//给你两个整数数组 arr1 和 arr2，返回使 arr1 严格递增所需要的最小「操作」数（可能为 0）。 每一步「操作」中，你可以分别从 arr1 和 arr2 中各选出一个索引，分别为 i 和 j，0 <= i < arr1.length 和 0 <= j < arr2.length，然后进行赋值运算 arr1[i] = arr2[j]。 如果无法让 arr1 严格递增，请返回 -1。
+    int makeArrayIncreaing(std::vector<int>& arr1, std::vector<int>& arr2){
+        std::sort(arr2.begin(), arr2.end());
+        arr2.erase(std::unique(arr2.begin(), arr2.end()), arr2.end());
+        int size_1 = arr1.size();
+        int size_2 = arr2.size();
+        std::vector<int> dp_0(size_2 + 1, 1);
+        std::vector<int> dp_1(size_2 + 1, INT_MAX>>1);
+        dp_0[0] = 0;
+        for(int i=1; i<size_1; ++i){
+            for(int j=2; j<=size_2; ++j){
+                dp_1[j] = std::min(dp_1[j], dp_0[j-1] + 1);
+            }
+
+            if(arr1[i] > arr1[i-1])dp_1[0] = std::min(dp_1[0], dp_0[0]);
+
+            int r = std::upper_bound(arr2.begin(), arr2.end(), arr1[i-1]) - arr2.begin();
+            for(int j=r; j<size_2; ++j){
+                dp_1[j+1]  = std::min(dp_1[j+1], dp_0[0]+1);
+            }
+
+            int l = std::lower_bound(arr2.begin(), arr2.end(), arr1[i]) - arr2.begin() - 1;
+            for(int j=0; j<=l; ++j){
+                dp_1[0] = std::min(dp_1[0], dp_0[j+1]);
+            }
+
+            if(*min_element(dp_1.begin(), dp_1.end()) == INT_MAX>>1)return -1;
+
+            dp_0 = dp_1;
+            std::fill(dp_1.begin(), dp_1.end(), INT_MAX>>1);
+        }
+        return *min_element(dp_0.begin(), dp_0.end());
+    }
+
+//我们有两个长度相等且不为空的整型数组 A 和 B 。 我们可以交换 A[i] 和 B[i] 的元素。注意这两个元素在各自的序列中应该处于相同的位置。
+    int minSwap(std::vector<int>& A, std::vector<int>& B){
+        int size = A.size();
+        std::vector<std::vector<int>> dp(size, std::vector<int>(size, 0));
+        dp[0][0] = 1;
+        dp[0][1] = 1;
+        for(int i=1; i<size; ++i){
+            if(A[i]>A[i-1] && B[i]>B[i-1]){
+                if(B[i]>A[i-1] && B[i-1]<A[i]){
+                    dp[i][0] = std::min(dp[i-1][0], dp[i-1][1]);
+                    dp[i][1] = std::min(dp[i-1][0], dp[i-1][1]) + 1;
+                }else{
+                    dp[i][0] = dp[i-1][0];
+                    dp[i][1] = dp[i-1][1] + 1;
+                }
+            }else{
+                dp[i][0] = dp[i-1][1];
+                dp[i][1] = dp[i-1][0] + 1;
+            }
+        }
+        return std::min(dp[size-1][0], dp[size-1][1]);
+    }
+    int minSwap_better(std::vector<int>& A, std::vector<int>& B){
+        int dp_0 = 0, dp_1 = 1;
+        int size = A.size();
+        for(int i=1; i<size; ++i){
+            if(A[i]>A[i-1] && B[i]>B[i-1]){
+                if(A[i-1] < B[i] && B[i-1] < A[i]){
+                    dp_1 = (dp_0=std::min(dp_0, dp_1)) + 1;
+                }else{
+                    ++dp_1;
+                }
+            }else{
+                std::swap(++dp_0, dp_1);
+            }
+        }
+        return std::min(dp_1, dp_0);
+    }
+
+//935. 骑士拨号器
+    int knightDialer_dfs(int N){
+        int MOD = 1e9 + 7;
+        int res = 0;
+        for(int i=0; i<4; ++i){
+            for(int j=0; j<3; ++j){
+                //std::vector<std::vector<int>> dp(4, std::vector<int>(3, 0));
+                vvve dp(N, vve(4, ve(3, 0)));
+                res = (res + dfs(N-1, i, j, dp)) % MOD;
+            }
+        }
+        return res;
+    }
+    int dfs(int n, int i, int j, vvve& dp){
+        if(i<0 || i>=4 || j<0 || j>=3)return 0;
+        if(i==3 && (j==0 || j==2))return 0;
+        if(!n)return 1;
+        if(dp[n][i][j])return dp[n][i][j];
+
+        int MOD       = 1e9 + 7;
+        long long res = 0;
+        res += dfs(n-1, i-1, j+2, dp);
+        res += dfs(n-1, i-1, j-2, dp);
+        res += dfs(n-1, i-2, j+1, dp);
+        res += dfs(n-1, i-2, j-1, dp);
+        res += dfs(n-1, i+1, j+2, dp);
+        res += dfs(n-1, i+1, j-2, dp);
+        res += dfs(n-1, i+2, j+1, dp);
+        res += dfs(n-1, i+2, j-1, dp);
+        return dp[n][i][j] = res % MOD;
+    }
+    int knightDialer(int N){
+        int MOD = 1e9 + 7;
+        std::vector<std::vector<long long>> dp_0(8, std::vector<long long>(7,0));
+        std::vector<std::vector<long long>> dp_1(8, std::vector<long long>(7,0));
+        for(int i=2; i<=5; ++i)fill(dp_0[i].begin()+2, dp_0[i].end()-2, 1);
+        dp_0[5][2] = 0;
+        dp_0[5][4] = 0;
+        for(int k=0; k<N-1; ++k){
+            for(int i=2; i<=5; ++i){
+                for(int j=2; j<=4; ++j){
+                    if(i==5 &&(j==2 || j==4))continue;
+                    dp_1[i][j] = (dp_0[i-1][j+2]+ dp_0[i-1][j-2]+
+                                  dp_0[i-2][j+1]+ dp_0[i-2][j-1]+
+                                  dp_0[i+1][j+2]+ dp_0[i+1][j-2]+
+                                  dp_0[i+2][j+1]+ dp_0[i+2][j-1]) % MOD;
+                }
+            }
+            dp_0 = dp_1;
+        }
+        int res = 0;
+        for(int i=2; i<=5; ++i){
+            for(int j=2; j<=4; ++j){
+                res = (res + dp_0[i][j]) % MOD;
+            }
+        }
+        return res;
+    }
+
+//给你一棵以 root 为根的二叉树和一个 head 为第一个节点的链表。 如果在二叉树中，存在一条一直向下的路径，且每个点的数值恰好一一对应以 head 为首的链表中每个节点的值，那么请你返回 True ，否则返回 False 。
+        bool isSubPath(ListNode* head, TreeNode* root){
+            return dfs(head, root);
+        }
+        bool dfs(ListNode* head, TreeNode* root){
+            if(!head)return true;
+            if(!root)return false;
+            bool tmp = false;
+            if(root->val==head->val){
+                tmp =  process(head->next, root->right) || process(head->next, root->left);
+            }
+            return tmp || dfs(head, root->right) || dfs(head, root->left);
+        }
+        bool process(ListNode* head, TreeNode* root){
+            if(!head)return true;
+            if(head->val != root->val)return false;
+            return process(head->next, root->right) || process(head->next, root->left);
+        }
+//这里有 d 个一样的骰子，每个骰子上都有 f 个面，分别标号为 1, 2, ..., f。 我们约定：掷骰子的得到总点数为各骰子面朝上的数字的总和。 如果需要掷出的总点数为 target，请你计算出有多少种不同的组合情况（所有的组合情况总共有 f^d 种），模 10^9 + 7 后返回。
+        int numRollsToTarget(int d, int f, int target){
+            std::vector<int> dp(target+1, 0);
+            dp[0] = 1;
+            int MOD = 1e9 + 7;
+            for(int i=1; i<=d; ++i){
+                for(int t=target; t>=0; --t){
+                    dp[t] = 0;
+                    for(int j=1; j<=t && j<=f; ++j){
+                        dp[t] = (dp[t] + dp[t-j]) % MOD;
+                    }
+                }
+            }
+            return dp[target];
+        }
+//给定数组 nums 由正整数组成，找到三个互不重叠的子数组的最大和。 每个子数组的长度为k，我们要使这3*k个项的和最大化。 返回每个区间起始索引的列表（索引从 0 开始）。如果有多个结果，返回字典序最小的一个
+        std::vector<int> maxSumOfThreeSubarrays(std::vector<int>& nums, int k){
+            int size = nums.size();
+            std::vector<int> sums(size, 0);
+            int sum  = 0;
+            for(int i=0; i<size; ++i){
+                sum += nums[i];
+                if(i>=k)sum -= nums[i-k];
+                if(i>=k-1)sums[i] = sum;
+            }
+            int n = 3;
+            std::vector<std::vector<int>> dp(size, std::vector<int>(n+1, 0));
+            std::vector<std::vector<int>> pa(size, std::vector<int>(n+1, 0));
+            dp[k-1][1] = sums[k-1];
+            pa[k-1][1] = k-1;
+            for(int i=k; i<size; ++i){
+                for(int j=1; j<=n; ++j){
+                    dp[i][j] = std::max(dp[i-1][j], sums[i] + dp[i-k][j-1]);
+                    pa[i][j] = dp[i][j]==dp[i-1][j]?pa[i-1][j]:i;
+                }
+            }
+            std::vector<int> res;
+            int p = pa[size-1][n];
+            res.push_back(p-k+1);
+            for(int i=n-1; i>0; --i){
+                p = pa[p-k][i];
+                res.push_back(p-k+1);
+            }
+            std::reverse(res.begin(), res.end());
+            return res;
+        }
+//790
+    int numTilings(int N) {
+        int MOD = 1e9 + 7;
+        std::vector<int> dp(N+1);
+        dp[0] = 1;
+        dp[1] = 1;
+        dp[2] = 5;
+        dp[3] = 7;
+        for(int i=4; i<=N; ++i){
+            dp[i] = (2*dp[i-1]%MOD + dp[i-3]) % MOD;
+        }
+        return dp[N];
+    }
+    int numTilings_1(int N){
+        std::vector<int> dp_0 = {1,0,0,1};
+        std::vector<int> dp_1 = {0,0,0,0};
+        int MOD = 1e9 + 7;
+        for(int i=1; i<N; ++i){
+            dp_1[0] = dp_0[3] % MOD;
+            dp_1[1] = (dp_0[2] + dp_0[0]) % MOD;
+            dp_1[2] = (dp_0[1] + dp_0[0]) % MOD;
+            dp_1[3] = ((dp_0[0] + dp_0[1]) % MOD + (dp_0[2] + dp_0[3]) % MOD) % MOD;
+            dp_0 = dp_1;
+        }
+        return dp_0[3];
+    }
+//给你一个字符串 s ，每一次操作你都可以在字符串的任意位置插入任意字符。 请你返回让 s 成为回文串的 最少操作次数 。
+    int minInsertions(std::string& a){
+        int size = a.length();
+        std::vector<std::vector<int>> dp(size, std::vector<int>(size, INT_MAX>>1));
+        for(int j=0; j<size; ++j){
+            for(int i=j; i>=0; --i){
+                if(j-i<2 && a[i]==a[j]){
+                    dp[i][j] = 0;
+                    continue;
+                }
+                dp[i][j] = a[i]==a[j]?(dp[i+1][j-1]):std::min(dp[i+1][j], dp[i][j-1])+1;
+                //if(a[i] == a[j]){
+                    //dp[i][j] = dp[i+1][j-1];
+                //}else{
+                    //dp[i][j] = std::min(dp[i+1][j], dp[i][j-1]) + 1;
+                //}
+            }
+        }
+        return dp[0][size-1];
+    }
+//有 N 堆石头排成一排，第 i 堆中有 stones[i] 块石头。 每次移动（move）需要将连续的 K 堆石头合并为一堆，而这个移动的成本为这 K 堆石头的总数。 找出把所有石头合并成一堆的最低成本。如果不可能，返回 -1 。
+    int mergeStones(std::vector<int>& s, int K){
+        int size = s.size();
+        if(size<=1)return 0;
+        if((size-1) % (K-1))return -1;
+        std::vector<int> sums(s);
+        for(int i=1; i<size; ++i)sums[i] += sums[i-1];
+        sums.insert(sums.begin(), 0);
+        std::vector<std::vector<int>> dp(size, std::vector<int>(size, 0));
+        for(int j=0; j<size; ++j){
+            for(int i=i-K+1; i>=0; --i){
+                dp[i][j] = INT_MAX;
+                for(int m=j; m>i; m-=(K-1)){
+                    dp[i][j] = std::min(dp[i][j], dp[i][m-1]+dp[m][j]);
+                }
+                if(!((j-i) % (K-1))) dp[i][j] += (sums[j+1] - sums[i]);
+            }
+        }
+        return dp[0][size-1];
+    }
+    int mergeStones_fuck(std::vector<int>& stones, int K) {
+        int res = 0;
+        int sum = 0;
+        std::vector<int> tmp(stones);
+        for(int i=0; i<tmp.size(); ++i){
+            if(tmp.size()<K)return -1;
+            int b = get_sum(tmp, sum, K);
+            res += sum;
+            std::vector<int> t;
+            t.assign(tmp.begin(), tmp.begin()+b);
+            t.emplace_back(sum);
+            t.insert(t.end(), tmp.begin()+b+K-1, tmp.end());
+
+            tmp = t;
+        }
+        return res;
+    }
+    int get_sum(std::vector<int>& tmp, int& sum, int K){
+        int s     = 0;
+        int res_1 = 0;
+        for(int i=0; i<tmp.size(); ++i){
+            s += tmp[i];
+            if(i >= K)s -= tmp[i-K];
+            if(i >= K-1)sum = (s>sum)?({res_1=(i-K+1);s;}):sum;
+        }
+        return res_1;
+    }
+//960. 删列造序 III
+    int minDeletionSize(std::vector<std::string>& A){
+        const int size = A.size();
+        const int len  = A[0].length();
+        int   res = -1;
+        std::vector<int> dp(len, 1);
+        for(int i=0; i<len; ++i){
+            for(int j=0,k=0; j<i; ++j){
+                for(k=0; k<size; ++k){
+                    if(A[k][j] > A[k][i])break;
+                }
+                if(k<size)continue;
+                dp[i] = std::max(dp[i], dp[j] + 1);
+            }
+            res = std::max(res, dp[i]);
+        }
+        return len - res;
+    }
+//给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，判定 s 是否可以被空格拆分为一个或多个在字典中出现的单词。
+//拆分时可以重复使用字典中的单词。 你可以假设字典中没有重复的单词。
+    bool wordBreak(std::string s, std::vector<std::string>& wd){
+        std::vector<int> dp(s.length(), -1);
+        return dfs(s, wd, 0, dp);
+    }
+    bool dfs(std::string& s, std::vector<std::string>& wd, int begin, std::vector<int>& dp){
+        if(begin>=s.length())return true;
+        if(dp[begin]!=-1)return dp[begin];
+        int size = wd.size();
+        for(int i=0; i<size; ++i){
+            if(wd[i][0] == s[begin]){
+                int k = 0;
+                for(; k<wd[i].length() && wd[i][k]==s[begin+k]; ++k);
+                if(k<wd[i].length())continue;
+                if(dfs(s, wd, begin+wd[i].length(), dp))return true;
+            }
+        }
+        return dp[begin] = false;
+    }
+//给定三个字符串 s1, s2, s3, 验证 s3 是否是由 s1 和 s2 交错组成的。
+    bool inInterleave(std::string s1, std::string s2, std::string s3){
+        int size_1 = s1.length();
+        int size_2 = s2.length();
+        int size_3 = s3.length();
+        if(size_1 + size_2 != size_3)return false;
+        std::vector<int> dp(size_2+1, false);
+        dp[0] = true;
+        for(int i=0; i<=size_1; ++i){
+            for(int j=0; j<=size_2; ++j){
+                if(i>0)dp[j] &= (s3[i+j-1] == s1[i-1]);
+                if(j>0)dp[j] |= (dp[j-1]  && s3[i+j-1] == s1[j-1]);
+            }
+        }
+        return dp[size_2];
+    }
+//你有一个 n x 3 的网格图 grid ，你需要用 红，黄，绿 三种颜色之一给每一个格子上色，且确保相邻格子颜色不同（也就是有相同水平边或者垂直边的格子颜色不同）。 给你网格图的行数 n 。
+    int numOfWays(int n){
+        int dp_101 = 6;
+        int dp_012 = 6;
+        int MOD    = 1e9 + 7;
+        for(int i=1; i<n; ++i){
+            int tmp_101 = (dp_101*3LL + dp_012*2LL) % MOD;
+            int tmp_012 = (dp_101*2LL + dp_012*2LL) % MOD;
+            dp_101 = tmp_101;
+            dp_012 = tmp_012;
+        }
+        return (dp_101 + dp_012) % MOD;
+    }
+};
+
+class NumMatrix{
+    public:
+        std::vector<std::vector<int>> m;
+        std::vector<std::vector<int>> dp;
+        NumMatrix(std::vector<std::vector<int>>& matrix){
+            int row = matrix.size();
+            int col = matrix[0].size();
+            m  = matrix;
+            dp = std::vector<std::vector<int>>(matrix);
+            for(int i=0; i<row; ++i){
+                for(int j=1; j<col; ++j){
+                    dp[i][j] += dp[i][j-1];
+                }
+            }
+        }
+        int sumRegion(int row1, int col1, int row2, int col2){
+            int res = 0;
+            for(int i=row1; i<=row2; ++i){
+                res += dp[i][col2] - dp[i][col1];
+            }
+            return res;
+        }
+};
 int main(int argc,const char *argv[]){
     Solution te;
+    std::vector<std::string> s = {"java","nodejs", "reactjs"};
+    std::vector<std::vector<std::string>> p = {
+        { "java" },
+        { "nodejs" },
+        {"nodejs","reactjs"}
+    };
+    std::vector<std::string> s1 = {"algorithms","math","java","reactjs","csharp","aws"};
+    std::vector<std::vector<std::string>> p1 = {
+        { "algorithms","math","java" },
+        { "algorithms","math","reactjs" },
+        { "java","csharp","aws" },
+        { "reactjs","csharp" },
+        { "csharp","math" },
+        { "aws","java"}
+    };
+    //te.smallestSufficientTeam(s, p);
+    te.smallestSufficientTeam(s1, p1);
+    //std::string r = "goddingoddinasdtwzddinasddinasddi";
+    //std::string k = "dtwidingoddinasdtwzddinasddinasddngoddzd";
+    //::std::cout<<te.findRorateSteps_dfs(r, k)<<::std::endl;
     //int N = 3; int K = 2; int r = 0; int c = 0;
-    int N = 16; int K = 12; int r = 2; int c = 3;
-    ::std::cout<<te.knightProbability(N, K, r, c)<<::std::endl;
+    //int N = 16; int K = 12; int r = 2; int c = 3;
+    //::std::cout<<te.knightProbability(N, K, r, c)<<::std::endl;
     //std::vector<int> p = {1,3,5,1,3,5};
     //std::vector<int> p = {1,3,5,4,71,31,3,5,4,7,1,3,5,4,7,5,1,3,5};
     //std::vector<int> p = {1,1,1,1,1,1};

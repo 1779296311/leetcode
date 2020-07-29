@@ -23,9 +23,9 @@ class Solution{
                 res.push_back(tmp);
                 return;
             }
-            for(int i=first; i<n; i++){
+            for(int i=first; i<num; i++){
                 tmp.push_back(i);
-                backtrack(i+1,tmp);
+                backtrack(k,i+1,tmp);
                 tmp.pop_back();
             }
         }

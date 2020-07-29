@@ -128,6 +128,50 @@ class Solution{
             }
             return res - cnt + 1;
         }
+
+//我们有一组排序的数字 D，它是  {'1','2','3','4','5','6','7','8','9'} 的非空子集。（请注意，'0' 不包括在内。） 现在，我们用这些数字进行组合写数字，想用多少次就用多少次。例如 D = {'1','3','5'}，我们可以写出像 '13', '551', '1351315' 这样的数字。 返回可以用 D 中的数字写出的小于或等于 N 的正整数的数目。
+        std::vector<int> dp, mp, digit;
+    int atMostNGivenDigitSet(std::vector<std::string>& D, int N){
+        digit.push_back(0);
+        while(N>0){
+            digit.push_back(N%10);
+            N /= 10;
+        }
+        mp = std::vector<int>(10, 0);
+        for(auto &d : D)mp[d[0]-'0'] = 1;
+        int size = digit.size();
+        dp = std::vector<int>(size+1, -1);
+        return dfs(size-1, true, true);
+    }
+    int dfs(int index, bool limit, bool zero){
+        if(!index)return !zero;
+        if(!limit && !zero && dp[index]!=-1)return dp[index];
+        int max_ = limit?digit[index]:9;
+        int res_ = 0;
+        for(int i=0; i<=max_; ++i){
+            if(zero && !i){
+                res_ += dfs(index-1, limit&&i==max_, true);
+            }else if(mp[i]){
+                res_ += dfs(index-1, limit&&i==max_, false);
+            }
+        }
+        return (!zero && !limit)?dp[index]=res_:res_;
+    }
+    int atMostNGivenDigitSet_fuck(std::vector<std::string>& D, int N){
+        int res = 0;
+        std::vector<int> dp(N+5, -1);
+        return dfs(0, dp, D, N);
+    }
+    int dfs(unsigned long long num, std::vector<int>& dp, std::vector<std::string>& D, int N){
+        if(num>N)return 0;
+        if(dp[num] != -1)dp[num];
+        int res = 1;
+        int size = D.size();
+        for(int i=0; i<size; ++i){
+            res += dfs(num*10+(D[i][0]-'0'), dp, D, N);
+        }
+        return res;
+    }
 };
 int main(int argc,const char *argv[]){
     Solution te;
