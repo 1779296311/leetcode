@@ -105,7 +105,7 @@ class Solution{
         }
         void dfs(std::vector<std::vector<int>>& res,
                 std::vector<int>& tmp, int t, int k, int beign){
-            if(t<0 || t<tmp.size())return;
+            if(t<0 || k<tmp.size())return;
             if(!t && tmp.size()==k){
                 res.push_back(tmp);
                 return;
@@ -138,13 +138,13 @@ class Solution{
     }
     int dfs(unsigned long long num, std::vector<int>& dp, std::vector<std::string>& D, int N){
         if(num>N)return 0;
-        if(dp[num] != -1)dp[num];
+        if(dp[num] != -1)return dp[num];
         int res = 1;
         int size = D.size();
         for(int i=0; i<size; ++i){
             res += dfs(num*10+(D[i][0]-'0'), dp, D, N);
         }
-        return res;
+        return dp[num] = res;
     }
 };
 

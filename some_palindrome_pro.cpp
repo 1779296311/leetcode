@@ -193,10 +193,11 @@ int main(int argc,const char *argv[]){
     string c3 = "aaaaaaaaaasjaskdjlasjdlkasfoiqefhadglsjdhffddkajsfhasdassdasdjahsfjhalkfzlvxhklxcvxhvsdkdjlajsdlkafsoiqehfadglsjdhffddkajsfh";
 
     string b = "abadab";
-    string a = "aaaass";
+    string a = "baaaass";
     string c = "s";
-    cout<<a3.length()<<endl;;
-    cout<<te.longest_Son(a,c)<<endl;
+    cout<<te.min_add_end(a)<<endl;
+    //cout<<a3.length()<<endl;;
+    //cout<<te.longest_Son(a,c)<<endl;
     //cout<<te.min_split_palindrome(a)<<endl;
     //cout<<te.min_add_all(b)<<endl;
     //cout<<a<<endl;

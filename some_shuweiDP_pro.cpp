@@ -6,7 +6,9 @@
 *     date     : 2020--05--25
 **********************************************/
 #include <iostream>
+#include <cmath>
 #include <cstring>
+#include <algorithm>
 #include <vector>
 #include <stdlib.h>
 long long DP3[20][20][2000];
@@ -169,6 +171,29 @@ class Solution{
         int size = D.size();
         for(int i=0; i<size; ++i){
             res += dfs(num*10+(D[i][0]-'0'), dp, D, N);
+        }
+        return res;
+    }
+//编写一个方法，计算从 0 到 n (含 n) 中数字 2 出现的次数。
+    int numberOf2InRange(int n){
+        std::vector<int> dig(20, 0);
+        int N = n;
+        int t = 0;
+        while(N){
+            dig[++t] = N % 10;
+            N /= 10;
+        }
+        std::vector<long long> dp(t+1, 0);
+        for(int i=1; i<=t; ++i)dp[i] = dp[i-1]*10 + pow(10, i-1);
+        long long int res = 0;
+        for(int i=t; i>0; --i){
+            res += dig[i] * dp[i-1];
+            if(dig[i]>2)res += pow(10, i-1);
+            if(dig[i]==2){
+                int tmp = 0;
+                for(int j=i-1; j>=1; --j)tmp = tmp * 10 + dig[j];
+                res += ++tmp;
+            }
         }
         return res;
     }

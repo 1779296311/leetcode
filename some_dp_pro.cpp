@@ -32,6 +32,29 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 };
 
+class NumMatrix{
+    public:
+        std::vector<std::vector<int>> m;
+        std::vector<std::vector<int>> dp;
+        NumMatrix(std::vector<std::vector<int>>& matrix){
+            int row = matrix.size();
+            int col = matrix[0].size();
+            m  = matrix;
+            dp = std::vector<std::vector<int>>(matrix);
+            for(int i=0; i<row; ++i){
+                for(int j=1; j<col; ++j){
+                    dp[i][j] += dp[i][j-1];
+                }
+            }
+        }
+        int sumRegion(int row1, int col1, int row2, int col2){
+            int res = 0;
+            for(int i=row1; i<=row2; ++i){
+                res += dp[i][col2] - dp[i][col1];
+            }
+            return res;
+        }
+};
 class Solution{
     public:
 //给定一个整数 n，求以 1 ... n 为节点组成的二叉搜索树有多少种？
@@ -61,6 +84,58 @@ class Solution{
                         root->left  = l;
                         root->right = r;
                         res.emplace_back(root);
+                    }
+                }
+            }
+            return res;
+        }
+//给你一个只包含 0 和 1 的 rows * columns 矩阵 mat ，请你返回有多少个 子矩形 的元素全部都是 1 。
+        int numSubmat(::std::vector<::std::vector<int>>& mat){
+            int n = mat.size();
+            int m = mat[0].size();
+            ::std::vector<::std::vector<int>> dp(n, ::std::vector<int> (m,0));
+            for(int i=0; i<n; ++i){
+                int one = 0;
+                for(int j=0; j<m; ++j){
+                    if(mat[i][j])++one;
+                    if(!mat[i][j])one = 0;
+                    dp[i][j] = one;
+                }
+            }
+            int res = 0;
+            for(int i=0; i<n; ++i){
+                for(int j=0; j<m; ++j){
+                    int tmp = 151;
+                    for(int k=i; k>=0; --k){
+                        tmp = ::std::min(tmp, dp[k][j]);
+                        res += tmp;
+                    }
+                }
+            }
+            return res;
+        }
+//统计全为 1 的正方形子矩阵
+        int countSquares(std::vector<std::vector<int>> matrix){
+            int m = matrix.size();
+            int n = matrix[0].size();
+            std::vector<std::vector<int>> dp(matrix);
+            for(int i=0; i<m; ++i){
+                for(int j=0; j<n; ++j){
+                    if(j && dp[i][j])dp[i][j] += dp[i][j-1];
+                }
+            }
+            int res = 0 ;
+            for(int i=0; i<m; ++i){
+                for(int j=0; j<n; ++j){
+                    int len = dp[i][j];
+                    while(len){
+                        int i1  = i-len+1;
+                        while(i1<i && i1>=0 && dp[i1][j]>=len)++i1;
+                        if(i1==i){
+                            res += len;
+                            break;
+                        }
+                        --len;
                     }
                 }
             }
@@ -746,6 +821,31 @@ class Solution{
             if(sum-dp[0] > dp[0])return "Bob";
             return "Alice";
         }
+//给你一个披萨，它由 3n 块不同大小的部分组成，现在你和你的朋友们需要按照如下规则来分披萨：
+//你挑选 任意 一块披萨。
+//Alice 将会挑选你所选择的披萨逆时针方向的下一块披萨。
+//Bob 将会挑选你所选择的披萨顺时针方向的下一块披萨。
+//重复上述过程直到没有披萨剩下。
+        int maxSizeSlices(std::vector<int>& slices){
+            std::vector<int> s0(slices.begin(), slices.end()-1);
+            std::vector<int> s1(slices.begin()+1, slices.end());
+            return std::max(calc(s0), calc(s1));
+        }
+        int calc(std::vector<int>& slices){
+            int size = slices.size();
+            std::vector<std::vector<int>> dp(size+1, std::vector<int>((size+1)/3+1, 0));
+            for(int i=1; i<=size; ++i){
+                for(int j=1; j<=(size+1)/3; ++j){
+                    dp[i][j] = std::max(dp[i-1][j], (i>1?dp[i-2][j-1]:0)+slices[i-1]);
+                }
+            }
+            return dp[size][(size+1)/3];
+        }
+//爱丽丝和鲍勃一起玩游戏，他们轮流行动。爱丽丝先手开局。 最初，黑板上有一个数字 N 。在每个玩家的回合，玩家需要执行以下操作： 选出任一 x，满足 0 < x < N 且 N % x == 0 。 用 N - x 替换黑板上的数字 N 。 如果玩家无法执行这些操作，就会输掉游戏。
+        bool dicisorGame(int N){
+            return !(N&1);
+        }
+
 //总共有 n 个人和 40 种不同的帽子，帽子编号从 1 到 40 。 给你一个整数列表的列表 hats ，其中 hats[i] 是第 i 个人所有喜欢帽子的列表。 请你给每个人安排一顶他喜欢的帽子，确保每个人戴的帽子跟别人都不一样，并返回方案数。 由于答案可能很大，请返回它对 10^9 + 7 取余后的结果。
         int numberWays(::std::vector<::std::vector<int>> & hats){
             long long MOD = 1000000007;
@@ -1396,7 +1496,8 @@ std::cout<<"________________________"<<std::endl;
         int findLongestChain_better(std::vector<std::vector<int>>& p){
             int size = p.size();
             std::sort(p.begin(), p.end(), [](const auto& a, const auto& b){
-                    return 1[a] < 1[b] || (1[a]==1[b] && 0[a]<0[b]);
+                    return 1;
+                    //return 1[a] < 1[b] || (1[a]==1[b] && 0[a]<0[b]);
             });
             int res = 1;
             int e   = p[0][1];
@@ -1407,24 +1508,6 @@ std::cout<<"________________________"<<std::endl;
                 }
             }
             return res;
-        }
-//我们将给定的数组 A 分成 K 个相邻的非空子数组 ，我们的分数由每个子数组内的平均值的总和构成。计算我们所能得到的最大分数是多少。 注意我们必须使用 A 数组中的每一个数进行分组，并且分数不一定需要是整数。
-        double largestSumOfAverages(std::vector<int>& A, int K){
-            int size  = A.size();
-            std::vector<double> dp(size, 0);
-            std::vector<int> sum(A);
-
-            for(int i=1; i<size; ++i)sum[i] += sum[i-1];
-            for(int i=0; i<size; ++i)dp[i]   = sum[i]/(i+1);
-
-            for(int k=2; k<=K; ++k){
-                for(int i=size-1; i>=k-1; --i){
-                    for(int j=k-1; j<i; ++j){
-                        dp[i] = std::max(dp[i], dp[j]+(sum[i]-sum[j])/(i-j));
-                    }
-                }
-            }
-            return dp[size-1];
         }
 //有一个骰子模拟器会每次投掷的时候生成一个 1 到 6 的随机数。 不过我们在使用它时有个约束，就是使得投掷骰子时，连续 掷出数字 i 的次数不能超过 rollMax[i]（i 从 1 开始编号）。 现在，给你一个整数数组 rollMax 和一个整数 n，请你来计算掷 n 次骰子可得到的不同点数序列的数量。 假如两个序列中至少存在一个元素不同，就认为这两个序列是不同的。由于答案可能很大，所以请返回 模 10^9 + 7 之后的结果。
         int dieSimulator(int n, std::vector<int> r){
@@ -1796,7 +1879,7 @@ std::cout<<"________________________"<<std::endl;
     }
 //给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，判定 s 是否可以被空格拆分为一个或多个在字典中出现的单词。
 //拆分时可以重复使用字典中的单词。 你可以假设字典中没有重复的单词。
-    bool wordBreak(std::string s, std::vector<std::string>& wd){
+    bool wordBreak_I(std::string s, std::vector<std::string>& wd){
         std::vector<int> dp(s.length(), -1);
         return dfs(s, wd, 0, dp);
     }
@@ -1814,6 +1897,54 @@ std::cout<<"________________________"<<std::endl;
         }
         return dp[begin] = false;
     }
+//给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，在字符串中增加空格来构建一个句子，使得句子中所有的单词都在词典中。返回所有这些可能的句子。
+//分隔时可以重复使用字典中的单词。 你可以假设字典中没有重复的单词。
+    std::vector<std::string> wordBreak_II(std::string& s, std::vector<std::string>& wd){
+        std::vector<std::string> res;
+        std::string tmp;
+        std::unordered_map<std::string, std::vector<std::string>> dp;
+        return dfs(s, tmp, 0, dp, wd);
+    }
+    std::vector<std::string> dfs(std::string& s, std::string tmp,int begin,
+             std::unordered_map<std::string, std::vector<std::string>>& dp,
+             std::vector<std::string>& wd){
+        if(dp.count(tmp))return dp[tmp];
+        if(begin>=s.length())return dp[tmp] = {tmp};
+        std::vector<std::string> ans;
+        std::vector<std::string> ans_t;
+        std::string t;
+        int size = wd.size();
+        for(int i=0; i<size; ++i){
+            if(wd[i][0] == s[begin]){
+                int k = 0;
+                for(; k<wd[i].size() && s[begin+k]==wd[i][k]; ++k);
+                if(k!=wd[i].size())continue;
+                t = tmp.size()?tmp+" "+wd[i]:tmp+wd[i];
+                dp[t] = dfs(s, t, begin+wd[i].size(), dp, wd);
+                for(auto &s : dp[t])ans.push_back(s);
+            }
+        }
+        return dp[tmp] = ans;
+    }
+    std::vector<std::string> wordBreak(std::string s, std::vector<std::string>& wordDict) {
+        std::unordered_map<std::string,std::vector<std::string> > m;
+        return helper(m,wordDict,s);
+    }
+    std::vector<std::string> helper(std::unordered_map<std::string,std::vector<std::string> >& m,std::vector<std::string>& wordDict,std::string s){
+        if(m.count(s)) return m[s];
+        if(s.empty()) return {""};
+        std::vector<std::string> res;
+        for(auto word:wordDict){
+            if(s.substr(0,word.size())!=word) continue;
+            std::vector<std::string> tmp=helper(m,wordDict,s.substr(word.size()));
+            for(auto itm:tmp){
+                res.push_back(word+(itm.empty()?"":" "+itm));
+            }
+        }
+        m[s]=res;
+        return res;
+    }
+
 //给定三个字符串 s1, s2, s3, 验证 s3 是否是由 s1 和 s2 交错组成的。
     bool inInterleave(std::string s1, std::string s2, std::string s3){
         int size_1 = s1.length();
@@ -1843,50 +1974,270 @@ std::cout<<"________________________"<<std::endl;
         }
         return (dp_101 + dp_012) % MOD;
     }
-};
-
-class NumMatrix{
-    public:
-        std::vector<std::vector<int>> m;
-        std::vector<std::vector<int>> dp;
-        NumMatrix(std::vector<std::vector<int>>& matrix){
-            int row = matrix.size();
-            int col = matrix[0].size();
-            m  = matrix;
-            dp = std::vector<std::vector<int>>(matrix);
-            for(int i=0; i<row; ++i){
-                for(int j=1; j<col; ++j){
-                    dp[i][j] += dp[i][j-1];
+//741. 摘樱桃
+    int cherryPickUp(std::vector<std::vector<int>>& grid){
+        int size = grid.size();
+        int step = (size<<1) - 1;
+        std::vector<std::vector<int>> dp(size, std::vector<int>(size, -1));
+        dp[0][0] = grid[0][0];
+        for(int s=1; s<=step; ++s){
+            for(int one_i=std::min(size-1, s);one_i>s-size && one_i>=0; --one_i){
+                for(int two_i=std::min(size-1, s);two_i>s-size && two_i>=0; --two_i){
+                    int one_j = s - one_i;
+                    int two_j = s - two_i;
+                    if(grid[one_i][one_j]==-1 || grid[two_i][two_j]==-1){dp[one_i][one_j]=-1;continue;};
+                    int res = dp[one_i][two_i];
+                    if(one_i)res = std::max(res, dp[one_i-1][two_i]);
+                    if(two_i)res = std::max(res, dp[one_i][two_i-1]);
+                    if(one_i && two_i)res = std::max(res, dp[one_i-1][two_i-1]);
+                    if(res>=0)dp[one_i][two_i] = res + grid[one_i][one_j] + (one_i==two_i?0:grid[two_i][two_j]);
                 }
             }
         }
-        int sumRegion(int row1, int col1, int row2, int col2){
-            int res = 0;
-            for(int i=row1; i<=row2; ++i){
-                res += dp[i][col2] - dp[i][col1];
+        return std::max(0, dp[size-1][size-1]);
+    }
+    int cherryPickUp_fuck(std::vector<std::vector<int>>& grid){
+        int size_i = grid.size();
+        int size_j = grid[0].size();
+        std::vector<std::vector<int>> dp(grid);
+        for(int i=1; i<size_j; ++i)dp[0][i] += (dp[0][i]!=-1&&dp[0][i-1]!=-1)?dp[0][i-1]:0;
+        for(int i=1; i<size_i; ++i)dp[i][0] += (dp[i][0]!=-1&&dp[i-1][0]!=-1)?dp[i-1][0]:0;
+
+        for(int i=1; i<size_i; ++i){
+            for(int j=1; j<size_j; ++j){
+                if(grid[i][j]==-1)continue;
+                if(grid[i-1][j]==-1 && grid[i][j-1]==-1)return 0;
+                if(grid[i-1][j] != -1)dp[i][j] = grid[i][j] + dp[i-1][j];
+                if(grid[i][j-1] != -1)dp[i][j] = std::max(dp[i][j], grid[i][j]+dp[i][j-1]);
             }
-            return res;
         }
+        if(dp[size_i-1][size_j-1]==-1)return 0;
+        int i = size_i - 1;
+        int j = size_j - 1;
+
+        while(i || j){
+            if(i && grid[i-1][j] !=-1 && dp[i-1][j] == dp[i][j]-grid[i][j]){
+                 grid[i][j] = 0;
+                --i;
+            }else if(j && grid[i][j-1] !=-1){
+                grid[i][j] = 0;
+                --j;
+            }
+        }
+
+        int res_1 = dp[size_i-1][size_j-1];
+
+        for(int i=0; i<size_i; ++i)fill(dp[i].begin(), dp[i].end(), 0);
+
+        dp.assign(grid.begin(), grid.end());
+        for(int i=size_j-2; i>=0; --i)dp[size_i-1][i] += (dp[size_i-1][i]!=-1&&dp[size_i-1][i+1]!=-1)?grid[size_i-1][i+1]:0;
+        for(int i=size_i-2; i>=0; --i)dp[i][size_j-1] += (dp[i][size_j-1]!=-1&&dp[i+1][size_j-1]!=-1)?grid[i+1][size_j-1]:0;
+
+        for(int i=size_i-2; i>=0; --i){
+            for(int j=size_j-2; j>=0; --j){
+                if(grid[i][j]==-1)continue;
+                if(grid[i+1][j] != -1)dp[i][j] = grid[i][j] + dp[i+1][j];
+                if(grid[i][j+1] != -1)dp[i][j] = std::max(dp[i][j], grid[i][j]+dp[i][j+1]);
+            }
+        }
+        for(int i=0; i<size_i ;++i){
+            for(int j=0; j<size_j; ++j){
+                std::cout<<dp[i][j]<<"    ";
+            }
+            std::cout<<std::endl;
+        }
+        return dp[0][0] + res_1;
+    }
+//给定一个字符串 S，计算 S 的不同非空子序列的个数。 因为结果可能很大，所以返回答案模 10^9 + 7.
+    int distinctSubstr(std::string& S){
+        int size = S.length();
+        std::vector<int> dp(size+1, 0);
+        std::vector<int> last(26, -1);
+        int MOD = 1e9 + 7;
+        dp[0]   = 1;
+        for(int i=1; i<=size; ++i){
+            int c = S[i-1] - 'a';
+            dp[i] = (dp[i-1] * 2) % MOD;
+            if(-1!=last[c])dp[i] =(dp[i] - dp[last[c]]) % MOD;
+            last[c] = i-1;
+        }
+        if(--dp[size]<0)dp[size] += MOD;
+        return dp[size];
+    }
+//403. 青蛙过河
+    bool canCross(std::vector<int>& stones){
+        std::unordered_map<int, std::unordered_set<int>> dp;
+        int size = stones.size();
+        for(int i=0; i<size; ++i)dp.insert({stones[i],{}});
+        dp[0].insert(0);
+        for(int i=0; i<size; ++i){
+            for(auto &l : dp[stones[i]]){
+                for(int step=l-1; step<=l+1; ++step){
+                    if(step>0 && dp.count(step+stones[i])){
+                        dp[step+stones[i]].insert(step);
+                    }
+                }
+            }
+        }
+        return dp[stones[size-1]].size();
+    }
+//1289. 下降路径最小和  II
+    int minFallPathSum_II(std::vector<std::vector<int>>& arr){
+        int size_i = arr.size();
+        if(!size_i)return 0;
+        int size_j = arr[0].size();
+        std::vector<int> dp_0(arr[0]);
+        std::vector<int> dp_1(size_j, INT_MAX>>1);
+        for(int i=1; i<size_i; ++i){
+            for(int j=0; j<size_j; ++j){
+                for(int t = 0; t<size_j; ++t){
+                    if(t==j)continue;
+                    dp_1[j] = std::min(dp_1[j], dp_0[t]+arr[i][j]);
+                }
+            }
+            dp_0 = dp_1;
+            fill(dp_1.begin(), dp_1.end(), INT_MAX>>1);
+        }
+        return *min_element(dp_0.begin(), dp_0.end());
+    }
+//931. 下降路径最小和
+    int minFallPathSum_I(std::vector<std::vector<int>>& arr){
+        int size_i = arr.size();
+        if(!size_i)return 0;
+        int size_j = arr[0].size();
+        std::vector<int> dp_0(arr[0]);
+        std::vector<int> dp_1(size_j, INT_MAX>>1);
+        for(int i=1; i<size_i; ++i){
+            for(int j=0; j<size_j; ++j){
+                for(int t=j-1; t<=j+1; ++t){
+                    if(t>=0 && t<size_j)dp_1[j] = std::min(dp_1[j], dp_0[t] + arr[i][j]);
+                }
+            }
+            dp_0 = dp_1;
+            fill(dp_1.begin(), dp_1.end(), INT_MAX>>1);
+        }
+        return *min_element(dp_0.begin(), dp_0.end());
+    }
+//面试题 01.05. 一次编辑
+    bool oneEditWay(std::string& f, std::string& s){
+        int size_f = f.length();
+        int size_s = s.length();
+        if(abs(size_f-size_s)>1)return false;
+        std::vector<std::vector<int>> dp(size_f+1, std::vector<int>(size_s+1, 0));
+
+        for(int i=0; (dp[i][0]=i)<size_f; ++i);
+        for(int i=0; (dp[0][i]=i)<size_s; ++i);
+
+
+        for(int i=1; i<=size_f; ++i){
+            for(int j=1; j<=size_s; ++j){
+                if(f[i-1]==s[j-1]){
+                    dp[i][j] = dp[i-1][j-1];
+                }else{
+                    int res  = dp[i-1][j-1] + 1;
+                    dp[i][j] = std::min(res, std::min(dp[i-1][j], dp[i][j-1])+1);
+                }
+            }
+        }
+        return dp[size_f][size_s]<2;
+    }
+//1416. 恢复数组
+    int numberOfArrays(std::string& s, int k){
+        int MOD  = 1e9 + 7;
+        int size = s.length();
+        std::vector<int> dp(size+1, 0);
+        dp[0] = 1;
+        for(int i=1; i<=size; ++i){
+            long long base = 1;
+            long long sum  = 0;
+            for(int j=i-1; j>=0&&i-j<=10; --j){
+                sum = sum + base*(s[j]-'0');
+                if(sum>k)break;
+                if(s[j] != '0'){
+                    dp[i] = (dp[i] + dp[j]) % MOD;
+                }
+                base *= 10;
+            }
+        }
+        return dp[size];
+    }
+//给定一个严格递增的正整数数组形成序列，找到 A 中最长的斐波那契式的子序列的长度。如果一个不存在，返回  0 。
+    int lenLongestFibSubstr(std::vector<int>& A){
+        std::unordered_map<int, int> hp;
+        std::unordered_map<int, int> L;
+        int size = A.size();
+        for(int i=0; i<size; ++i)hp[A[i]] = i;
+        int res = 0;
+        for(int i=0; i<size; ++i){
+            for(int j=i-1; j>=0; --j){
+                if(hp.count(A[i]-A[j]) && hp[A[i]-A[j]]<j){
+                    int k = hp[A[i]-A[j]];
+                    res   = std::max(res,(L[j*size+i] = L[k*size+j]+1)+2);
+                }
+            }
+        }
+        return res>=3?res:0;
+    }
+
+    int getMaxRepetitins(std::string s1, int n1, std::string s2, int n2){
+        std::unordered_map<int, std::pair<int, int>> hp;
+        int count1 = 0;
+        int count2 = 0;
+        int size1  = s1.length();
+        int size2  = s2.length();
+        int index  = 0;
+        while(count1<n1){
+            for(int i=0; i<size1; ++i){
+                if(s1[i] == s2[index])++index;
+                if(index==size2)++count2,index=0;
+            }
+            ++count1;
+            if(hp.count(index)){
+                auto [c1, c2] = hp[index];
+                int l1 = count1 - c1;
+                int l2 = count2 - c2;
+                int n  = (n1 - count1)/l1;
+                count1 += n*l1;
+                count2 += n*l2;
+            }else{
+                hp[index] = {count1, count2};
+            }
+        }
+        return count2/n2;
+    }
 };
+
 int main(int argc,const char *argv[]){
     Solution te;
-    std::vector<std::string> s = {"java","nodejs", "reactjs"};
-    std::vector<std::vector<std::string>> p = {
-        { "java" },
-        { "nodejs" },
-        {"nodejs","reactjs"}
-    };
-    std::vector<std::string> s1 = {"algorithms","math","java","reactjs","csharp","aws"};
-    std::vector<std::vector<std::string>> p1 = {
-        { "algorithms","math","java" },
-        { "algorithms","math","reactjs" },
-        { "java","csharp","aws" },
-        { "reactjs","csharp" },
-        { "csharp","math" },
-        { "aws","java"}
-    };
-    //te.smallestSufficientTeam(s, p);
-    te.smallestSufficientTeam(s1, p1);
+    std::string s = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    std::vector<std::string> wd = {"a","aa","aaa","aaaa","aaaaa","aaaaaa","aaaaaaa","aaaaaaaa","aaaaaaaaa","aaaaaaaaaa"};
+
+    std::vector<std::string> res = te.wordBreak_II(s, wd);
+
+    for(auto &s : res)std::cout<<s<<"\n";
+    //std::vector<std::vector<int>> g = {
+        //{0, 1, -1},
+        //{1, 0, -1},
+        //{1, 1, 1},
+    //};
+    //te.cherryPickUp(g);
+    //std::vector<std::string> s = {"java","nodejs", "reactjs"};
+    //std::vector<std::vector<std::string>> p = {
+        //{ "java" },
+        //{ "nodejs" },
+        //{"nodejs","reactjs"}
+    //};
+    //std::vector<std::string> s1 = {"algorithms","math","java","reactjs","csharp","aws"};
+    //std::vector<std::vector<std::string>> p1 = {
+        //{ "algorithms","math","java" },
+        //{ "algorithms","math","reactjs" },
+        //{ "java","csharp","aws" },
+        //{ "reactjs","csharp" },
+        //{ "csharp","math" },
+        //{ "aws","java"}
+    //};
+    ////te.smallestSufficientTeam(s, p);
+    //te.smallestSufficientTeam(s1, p1);
     //std::string r = "goddingoddinasdtwzddinasddinasddi";
     //std::string k = "dtwidingoddinasdtwzddinasddinasddngoddzd";
     //::std::cout<<te.findRorateSteps_dfs(r, k)<<::std::endl;
