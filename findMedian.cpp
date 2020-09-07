@@ -1,8 +1,8 @@
 /********************************************* 
-*     ------------------------                 
-*     ------------------------                 
+*     ------------------------
+*     ------------------------
 *     file name: findMedian.cpp
-*     author   : @JY    
+*     author   : @JY
 *     data     : 2019--09--05
 **********************************************/
 #include <iostream>
@@ -15,7 +15,6 @@ using  namespace  std;
 class Solution{
     public:
         double  findMedianSortedArray(vector<int> &nums1, vector<int> &nums2){
-
             for(int i=0; i<nums2.size(); i++){
                 nums1.push_back(nums2[i]);
             }
@@ -40,7 +39,7 @@ class Solution{
 
             while(lo <= ro){
                 cut_1   = (lo + ro)/2;
-               cut_2   = (n + m) - cut_1;   
+                cut_2   = (n + m) - cut_1;
 
                 L_max1  = (cut_1 == 0)   ? INT_MIN   : nums1[(cut_1 - 1)/2];
                 R_min1  = (cut_1 == 2*n) ? INT_MAX   : nums1[cut_1/2];

@@ -35,13 +35,13 @@ public:
         }
         return max(__get_Height(__root->left),__get_Height(__root->right)) + 1;
     }
-    int better(Treenode* __root){
+    int better(TreeNode* __root){
         if(__root){
             int left = better(__root->left);
             if(left == -1){
                 return -1;
             }
-            int left = better(__root->right);
+            int right = better(__root->right);
             if(right == -1){
                 return -1;
             }

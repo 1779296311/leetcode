@@ -12,6 +12,7 @@
 #include <list>
 #include <set>
 #include <unordered_set>
+#include <functional>
 #include <vector>
 #include <climits>
 #include <numeric>
@@ -821,6 +822,33 @@ class Solution{
             if(sum-dp[0] > dp[0])return "Bob";
             return "Alice";
         }
+//5498. 石子游戏 V
+        int stoneGameV(std::vector<int>& sv){
+            if(sv.size()<=1)return 0;
+            int size = sv.size();
+            std::vector<int64_t> sums(size+1, 0);
+            for(int i=0; i<size; ++i)sums[i+1] = sums[i] + sv[i];
+            std::vector<std::vector<int64_t>> dp(size+1, std::vector<int64_t>(size+1, -1));
+            std::function<int64_t(int, int)> dfs = [&](int l, int r){
+                if(dp[l][r]!=-1)return dp[l][r];
+                if(l==r)return int64_t{0};
+                int64_t res = 0;
+                for(int i=l; i<r; ++i){
+                    int sums1 = sums[i] - sums[l-1];
+                    int sums2 = sums[r] - sums[i];
+                    if(sums1 < sums2){
+                        res = std::max(res, dfs(l, i)+sums1);
+                    }else if(sums1 > sums2){
+                        res = std::max(res, dfs(i+1, r)+sums2);
+                    }else{
+                        res = std::max(res, std::max(dfs(l, i), dfs(i+1, r))+sums1);
+                    }
+                }
+                return dp[l][r] = res;
+            };
+            return dfs(1, size);
+        }
+
 //给你一个披萨，它由 3n 块不同大小的部分组成，现在你和你的朋友们需要按照如下规则来分披萨：
 //你挑选 任意 一块披萨。
 //Alice 将会挑选你所选择的披萨逆时针方向的下一块披萨。
