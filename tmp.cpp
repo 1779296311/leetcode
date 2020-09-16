@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <string>
+#include <vector>
 #include <sstream>
 using  namespace  std;
 class Rectangle
@@ -52,15 +53,24 @@ bool isPalindrome(int x) {
 
         return false;
 }
-
+void c(std::vector<int> a){
+    a[0] = -1;
+}
+void b(std::vector<int>& a){
+    c(a);
+}
 int main()
 {
     //string str  = "12312499--==123";
 
     //cout <<isPalindrome(14321) <<endl;
-
-    int a = 1;
-    int b = 10;
-    cout <<(a^b == b^a)<<endl;
+    std::vector<vector<int>> t = {{1, 2},{2, 3},{3, 4}};
+    t.assign(t.begin(), t.end());
+    for(int i=0; i<t.size(); ++i){
+        for(int j=0; j<t[i].size(); ++j){
+            std::cout<<t[i][j]<<"  ";
+        }
+        std::cout<<std::endl;
+    }
     return 0;
 }

@@ -111,7 +111,7 @@ class Solution{
             c2 -= c3;
 
             res += (c3 - (n-c));
-            res += c1-(c-1) + 2-(c-1);
+            res += c1-(c-1) + c2-(c-1);
             return res;
         }
 };
