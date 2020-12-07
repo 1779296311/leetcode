@@ -66,10 +66,10 @@ class Solution{
             }
             return i_0;
         }
-//k==any
+//k==n
 #define ve   ::std::vector<int>
-#define vve  ::std::vector<ve> 
-#define vvve ::std::vector<vve> 
+#define vve  ::std::vector<ve>
+#define vvve ::std::vector<vve>
         int max_profit_4(::std::vector<int>& prices, int k){
             int size = prices.size();
             if(size<=1)return 0;

@@ -13,6 +13,7 @@ struct ListNode {
      ListNode *next;
      ListNode(int x) : val(x), next(NULL) {}
  };
+//环的链表
 class Solution{
     public:
         ListNode *getFirstLoop(ListNode *head){

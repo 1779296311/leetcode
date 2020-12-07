@@ -937,6 +937,30 @@ class Solution{
         }
 
 //1095. 山脉数组中查找目标值
+        int findInMountainArray_11_15(int t, MountainArray& m){
+            int size = m.length();
+            std::function<int(int, int, std::function<bool(int)>)> _bsearch
+                = [&](int l, int r, std::function<bool(int)> _cmp){
+                    while(l < r){
+                        int m = l + ((r - l) >> 1);
+                        if(_cmp(m)){
+                            r = m;
+                        }else{
+                            l = m + 1;
+                        }
+                    }
+                    return r;
+                };
+            int p = _bsearch(0, size-1, [&](int i) -> bool {
+                    return m.get(i) > m.get(i+1); });
+            if(m.get(p) == t) return p;
+            int l = _bsearch(0, p - 1, [&](int i) -> bool {
+                    return m.get(i) >= t; });
+            if(m.get(l) == t) return l;
+            int r = _bsearch(p+1, size - 1, [&](int i) -> bool {
+                    return m.get(i) <= t; });
+            return m.get(r) == t ? r : -1;
+        }
         int findInMountainArray(int t, MountainArray& m){
             int size = m.length();
             int M    = 0;

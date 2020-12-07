@@ -8,11 +8,49 @@
 #include <climits>
 #include <unordered_set>
 #include <iostream>
+#include <functional>
 #include <list>
+#include <numeric>
+#include <climits>
+#include <cmath>
+#include <algorithm>
 #include <stdlib.h>
 #include <vector>
+
 class Solution {
 public:
+//LCP 04. 覆盖
+    int domino(int n, int m,  std::vector<std::vector<int>> &broken){
+        int all = (1 << m);
+        std::vector<int> bro(n+1);
+        std::vector<std::vector<int>> dp(n+1, std::vector<int>(all));
+        for(auto &p : broken)bro[p[0]] |= 1 << p[1];
+        std::function<int(int)> _calc = [&](int x){
+            int res = 0;
+            while(x){
+                int r = x & (-x);
+                if(x & (r << 1))++res;
+                x &= ~(r);
+                x &= ~(r << 1);
+            }
+            return res;
+        };
+        bro[n] = all - 1;
+        for(int i=n-1; i>=0; --i){
+            for(int cur=(~bro[i]) & (all-1); ;  cur = (cur-1)&(~bro[i])){
+                int S = cur & (~bro[i+1]), ans = 0;
+                for(int k=S; ; k=(k-1) & S){
+                    ans = std::max(ans,
+                            __builtin_popcount(k) + _calc(cur & (~k)) + dp[i+1][bro[i+1] | k]);
+                    if(!k)break;
+                }
+                dp[i][~cur & (all-1)] = ans;
+                if(!cur)break;
+            }
+        }
+        return *std::max_element(begin(dp[0]), end(dp[0]));
+    }
+
  //不需要回到原点
 //dp[i][j]表示当前已经走过点的集合为i，移动到j
     int TSP(int n, ::std::vector<::std::vector<int>>& p){
@@ -368,7 +406,7 @@ public:
         for(int i=1; i<(1<<n); ++i){
             for(int j=i; j; j=(j-1)&i){
                 if(__builtin_popcount(j) > k)continue;
-                if((pre[j]&(i^j)) !=pre[j])continue;
+                if((pre[j]&(i^j)) != pre[j])continue;
                 dp[i] = ::std::min(dp[i], dp[i^j]+1);
             }
         }

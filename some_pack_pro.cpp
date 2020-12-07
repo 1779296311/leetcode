@@ -70,7 +70,7 @@ class Solution{
                     for(int k=0; k<=stop; ++k){
                         int val = dp[j+k*goods[i][0]] - k*goods[i][1];
                         while(l<r && q[r-1].value<=val){--r;}
-                        q[r++]  = {val,k};
+                        q[r++]  = {val, k};
                         if(q[l].index+goods[i][2]<k)++l;
                         dp[j+k*goods[i][0]] = q[l].value + k*goods[i][1];
                     }
@@ -78,6 +78,7 @@ class Solution{
             }
             return dp[V];
         }
+
         /***************************************************二维费用的背包问题*********/
         int towPack(::std::vector<::std::vector<int>>& goods, int V, int W){
             ::std::vector<::std::vector<int>> dp(W+1,::std::vector<int>(V+1,0)) ;

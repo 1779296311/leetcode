@@ -6,8 +6,17 @@
 *     date     : 2020--03--07
 **********************************************/
 #include <iostream>
+#include <vector>
+#include <functional>
+#include <algorithm>
 #include <stdlib.h>
+
 using  namespace  std;
+
+void _print(std::vector<int> &nums){
+    for(auto &x : nums)std::cout<<x<<"   ";
+    std::cout<<std::endl;
+}
 class Solution{
    public:
    void adjust(int *nums, int size, int index){
@@ -77,6 +86,44 @@ class Solution{
             cout<<nums[i]<<endl;
         }
     }
+    void heap_sort(std::vector<int> &nums){
+        int size = nums.size();
+        std::function<void(int, int)> _heapify = [&](int index, int len){
+            int left = (index<<1) + 1, target = 0;
+            while(left < len){
+                left += (left+1<len && nums[left+1] > nums[left]);
+                target = nums[left] > nums[index] ? left : index;
+                if(index == target)break;
+                std::swap(nums[index], nums[target]);
+                index  = target;
+                left = (index << 1) + 1;
+            }
+        };
+        std::function<void(int, int val)> _heapaux = [&](int index, int val){
+            int parent = (index-1) >> 1;
+            while(index>0 && val > nums[parent]){
+                nums[index] = nums[parent];
+                index       = parent;
+                parent      = (index-1) >> 1;
+            }
+            nums[index] = val;
+        };
+        std::function<void(void)> _build_heap = [&](void){
+#ifdef __LEAZ
+            for(int i=size/2-1; i>=0; --i)_heapify(i, size);
+#else
+            for(int i=0; i<size; ++i)_heapaux(i, nums[i]);
+#endif
+        };
+        std::function<void(void)> _heap_sort = [&](void){
+            _build_heap();
+            for(int i=size-1; i>0; --i){
+                std::swap(nums[i], nums[0]);
+                _heapify(0, i);
+            }
+        };
+        _heap_sort();
+    }
 };
 void test(int *nums){
     int num[10] = {2,1,234,11,234,56785678,122,-2,4,87};
@@ -84,12 +131,17 @@ void test(int *nums){
     cout<<(*(&num+1)-num)<<endl;
 }
 int main(int argc,const char *argv[]){
-    int nums[10] = {2,1,234,11,234,56785678,122,-2,4,87};
-    int a = 9;
-    int *k = &a;
-    int *p = nums;
-    cout<<*(&p+1)-p<<endl;
-    test(nums);
+    Solution te;
+    std::vector<int> nums = {2,1,234,11,234,56785678,122,-2,4,87};
+    te.heap_sort(nums);
+    _print(nums);
+    std::cout<<std::endl;
+    //int nums[10] = {2,1,234,11,234,56785678,122,-2,4,87};
+    //int a = 9;
+    //int *k = &a;
+    //int *p = nums;
+    //cout<<*(&p+1)-p<<endl;
+    //test(nums);
     //Solution te;
     //te.heapSort(nums,10);
     //te.debug(nums,10);

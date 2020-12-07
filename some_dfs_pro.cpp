@@ -35,16 +35,12 @@ public:
     Node* left;
     Node* right;
     Node* next;
-
     Node() : val(0), left(NULL), right(NULL), next(NULL) {}
-
     Node(int _val) : val(_val), left(NULL), right(NULL), next(NULL) {}
-
     Node(int _val, Node* _left, Node* _right, Node* _next)
         : val(_val), left(_left), right(_right), next(_next) {}
 };
-
- struct ListNode {
+struct ListNode {
      int val;
      ListNode *next;
      ListNode(int x) : val(x), next(NULL) {}
@@ -64,6 +60,465 @@ public:
 };
 class Solution{
 public:
+//854. 相似度为 K 的字符串
+    int kSimilarity(std::string A, std::string B){
+        int res = INT_MAX;
+        std::function<void(int, std::string&, std::string&, int)> _dfs = [&](int r, std::string &a, std::string &b, int i){
+            if(a==b){
+                res = std::min(res, r);
+                return;
+            }
+            if(a[i]==b[i]){
+                _dfs(r, a, b, i+1);
+                return;
+            }
+            for(int j=i+1; j<a.length(); ++j){
+                if(a[i]==b[j] && b[i]==a[j]){
+                    std::swap(a[i], a[j]);
+                    _dfs(r+1, a, b, i+1);
+                    std::swap(a[i], a[j]);
+                    return;
+                }
+            }
+            for(int j=i+1; j<a.length(); ++j){
+                if(b[i]==a[j]){
+                    std::swap(a[i], a[j]);
+                    _dfs(r+1, a, b, i+1);
+                    std::swap(a[i], a[j]);
+                }
+            }
+        };
+        _dfs(0, A, B, 0);
+        return res;
+    }
+//785. 判断二分图
+    bool isBipartite(std::vector<std::vector<int>> &graph){
+        int n = graph.size();
+        std::vector<int> vi(n, -1);
+        std::function<bool(int, int)> _dfs = [&](int i, int c){
+            vi[i] = c;
+            for(auto &to : graph[i]){
+                if(vi[to]==!c)continue;
+                if(vi[to]==c)return false;
+                if(!_dfs(to, !c))return false;
+            }
+            return true;
+        };
+        for(int i=0; i<n; ++i){
+            if(vi[i]==-1 && !_dfs(i, 1))return false;
+        }
+        return true;
+    }
+//1466. 重新规划路线
+    int minReorder (int n, std::vector<std::vector<int>> &connections){
+        std::vector<std::unordered_map<int, int>> mp(n);
+        for(auto &p : connections){
+            mp[p[0]][p[1]] =  1;
+            mp[p[1]][p[0]] =  0;
+        }
+        int res = 0;
+        std::function<void(int, int)> _dfs = [&](int pre, int now){
+            for(auto &[to, f] : mp[now]){
+                if(to == pre)continue;
+                res += f;
+                _dfs(now, to);
+            }
+        };
+        _dfs(-1, 0);
+        return res;
+    }
+//664. 奇怪的打印机
+    int stringPrinter(std::string s){
+        int n = s.length();
+        if(n<=1)return n;
+        std::vector<std::vector<int>> dp(n , std::vector<int>(n, n));
+        for(int i=0; i<n; ++i)dp[i][i] = 1;
+        for(int j=1; j<n; ++j){
+            for(int i=j-1; i>=0; --i){
+                int total = dp[i+1][j];
+                for(int k=i+1; k<=j; ++k){
+                    if(s[i]==s[k])total = std::min(total, dp[i][k-1]+(k==j?0:dp[k+1][j]));
+                }
+                dp[i][j] = total;
+            }
+        }
+        return dp[0][n-1];
+    }
+//417. 太平洋大西洋水流问题
+    std::vector<std::vector<int>> paificAtlantic(std::vector<std::vector<int>> &matrix){
+        int m = matrix.size();
+        if(!m)return {};
+        int n = matrix[0].size();
+        std::vector<std::vector<int>> _fun = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        std::vector<std::vector<int>> A(m, std::vector<int>(n));
+        std::vector<std::vector<int>> B(m, std::vector<int>(n));
+        std::function<void(int, int, std::vector<std::vector<int>>&)> _dfs
+        = [&](int i, int j, std::vector<std::vector<int>> &p){
+            p[i][j] = 1;
+           for(auto &f : _fun){
+               int i1 = i + f[0];
+               int j1 = j + f[1];
+               if(i1>=m || j1>=m || i1<0 || j1<0 || p[i1][j1] || matrix[i][j] > matrix[i1][j1]){
+                   continue;
+               }
+               _dfs(i1, j1, p);
+           }
+        };
+        for(int i=0; i<m; ++i)_dfs(i, 0, A),_dfs(i, n-1, B);
+        for(int i=0; i<n; ++i)_dfs(0, i, A),_dfs(m-1, i, B);
+        std::vector<std::vector<int>> res;
+        for(int i=0; i<m; ++i){
+            for(int j=0; j<n; ++j){
+                if(A[i][j] && B[i][j])res.push_back({i, j});
+            }
+        }
+        return res;
+    }
+    std::vector<std::vector<int>> paificAtlantic_funk(std::vector<std::vector<int>> &matrix){
+        int m = matrix.size();
+        if(!m)return {};
+        int n = matrix[0].size();
+        std::vector<std::vector<int>> _fun = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        std::vector<vector<int>> vi;
+        std::function<bool(int, int, int &l, int &r)> _dfs = [&](int i, int j, int &l, int &r){
+            if(l&&r)return true;
+            vi[i][j] = 1;
+            for(auto &f : _fun){
+                int i1 = i + f[0];
+                int j1 = j + f[1];
+                if(i1<0 || j1<0){
+                    if(r)return true;
+                    l = 1;
+                    continue;
+                }
+                if(i1>=m || j1>=n){
+                    if(l)return true;
+                    r = 1;
+                    continue;
+                }
+                if(vi[i1][j1] || matrix[i][j]<matrix[i1][j1])continue;
+                if(_dfs(i1, j1, l, r) || (l && r))return true;
+            }
+            return false;
+        };
+        std::vector<vector<int>> res;
+        for(int i=0; i<m; ++i){
+            for(int j=0; j<n; ++j){
+                vi = std::vector<std::vector<int>>(m, std::vector<int>(n, 0));
+                int l=0, r=0;
+                if(_dfs(i, j, l, r))res.push_back({i, j});
+            }
+        }
+        return res;
+    }
+//1020. 飞地的数量
+    int numEncleaves(std::vector<std::vector<int>> &A){
+        int m = A.size();
+        int n = A[0].size();
+        int c = 0;
+        std::vector<std::vector<int>> _fun = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        std::function<int(int, int)> _dfs = [&](int i, int j){
+            A[i][j]  = 0;
+            int res  = 1;
+            int flag = 0;
+            for(auto &f : _fun){
+                int i1 = i - f[0];
+                int j1 = j + f[1];
+                if(i1<0 || j1<0 || i1>=m || j1>=n){
+                    c = 1;
+                    continue;
+                }
+                if(!A[i1][j1])continue;
+                res += _dfs(i1, j1);
+            }
+            return res;
+        };
+        int res = 0;
+        for(int i=0; i<m; ++i){
+            for(int j=0; j<n; ++j){
+                if(A[i][j]){
+                    c     = 0;
+                    int t = _dfs(i, j);
+                    res  += c?0:t;
+                }
+            }
+        }
+        return res;
+    }
+//851. 喧闹和富有
+    std::vector<int> loudAndRich(std::vector<std::vector<int>> &richer, std::vector<int> &quiet){
+        int n = quiet.size();
+        std::vector<int> res(n, -1);
+        std::function<void(int)> _dfs = [&](int i){
+            if(res[i] != -1)return;
+            res[i] = i;
+            for(auto &p : richer){
+                if(p[1]==i){
+                    _dfs(p[0]);
+                    if(quiet[res[i]] > quiet[res[p[0]]])res[i] = res[p[0]];
+                }
+            }
+        };
+        for(int i=0; i<n; ++i)_dfs(i);
+        return res;
+    }
+//207. 课程表
+    bool canFinish(int numCourses, std::vector<std::vector<int>> & prerequisites){
+        int n = numCourses;
+        std::vector<int> in(n, 0);
+        std::vector<std::vector<int>> e(n);
+        for(auto &t : prerequisites){
+            e[t[1]].push_back(t[0]);
+            ++in[t[0]];
+        }
+        std::queue<int> q;
+        for(int i=0; i<n; ++i){
+            if(!in[i])q.push(i);
+        }
+        int ans = n;
+        while(q.size()){
+            int t = q.front();q.pop();
+            if(!--ans)break;
+            for(auto &p : e[t]){
+                if(!--in[p])q.push(p);
+            }
+        }
+        return !ans;
+    }
+//743. 网络延迟时间
+    int networkDelayTime(std::vector<std::vector<int>> &times, int N, int K){
+        int INF = 0x3f3f3f;
+        std::vector<std::vector<int>> e(N+1, std::vector<int>(N+1, INF));
+        std::vector<int> vi(N+1);
+        std::vector<int> di(N+1, INF);
+        for(auto &t : times){
+            e[t[0]][t[1]] = t[2];
+        }
+        di[K] = 0;
+        for(int i=0; i<N-1; ++i){
+            int t = -1;
+            for(int j=1; j<=N; ++j){
+                if(!vi[j] && (t==-1 || di[t] > di[j])){
+                    t = j;
+                }
+            }
+            vi[t] = 1;
+            for(int j=1; j<=N; ++j){
+                di[j] = std::min(di[j], di[t]+e[t][j]);
+            }
+        }
+        int res = *max_element(di.begin()+1, di.end());
+        return res==INF?-1:res;
+   }
+//834. 树中距离之和
+    std::vector<int> sumOfDistanceInTree(int N, std::vector<std::vector<int>> &edges){
+        std::vector<int> count(N, 1), res(N);
+        std::vector<vector<int>> e(N);
+        for(auto &p : edges){
+            e[p[1]].push_back(p[0]);
+            e[p[0]].push_back(p[1]);
+        }
+        std::function<void(int, int)> _dfs_1 = [&](int i, int p){
+            for(auto &c : e[i]){
+                if(c==p)continue;
+                _dfs_1(c, i);
+                res[i]   += count[c] + res[c];
+                count[i] += count[c];
+            }
+        };
+        std::function<void(int, int)> _dfs_2 = [&](int i, int p){
+            for(auto &c : e[i]){
+                if(c==p)continue;
+                res[c] = res[i] - (count[c]<<1) + N;
+                _dfs_2(c, i);
+            }
+        };
+        _dfs_1(0, -1);
+        _dfs_2(0, -1);
+        return res;
+    }
+//827. 最大人工岛
+    int largetIsland(std::vector<std::vector<int>> &grid){
+#define mul(a, b) ((a)*n + (b))
+        int m = grid.size();
+        int n = grid[0].size();
+        std::vector<std::vector<int>> _fun = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        int res = 0;
+        std::vector<int> _f(n*m), _s(n*m, 1);
+        std::iota(_f.begin(), _f.end(), 0);
+        std::function<int(int)> _find = [&](int i){
+            return _f[i]==i?i:_f[i]=_find(_f[i]); };
+        std::function<void(int, int)> _union = [&](int a, int b){
+            int pa = _find(a);
+            int pb = _find(b);
+            if(pa==pb)return;
+            if(_s[pa] < _s[pb])std::swap(pa, pb);
+            res    = std::max(res, _s[pa]+=_s[pb]);
+            _f[pb] = pa;
+        };
+        for(int i=0; i<m; ++i){
+            for(int j=0; j<n; ++j){
+                if(!grid[i][j])continue;
+                if(i+1<m && grid[i+1][j])_union(mul(i, j), mul(i+1, j));
+                if(j+1<n && grid[i][j+1])_union(mul(i, j), mul(i, j+1));
+            }
+        }
+        std::unordered_map<int, int> temp;
+        for(int i=0; i<m; ++i){
+            for(int j=0; j<n; ++j){
+                if(grid[i][j])continue;
+                temp.clear();
+                for(auto &f : _fun){
+                    int i1 = i + f[0];
+                    int j1 = j + f[1];
+                    if(i1<0 || j1<0 || i1>=m || j1>=n || !grid[i1][j1]){
+                        continue;
+                    }
+                    int fa   = _find(mul(i1, j1));
+                    temp[fa] = _s[fa];
+                }
+                int t = 1;
+                for(auto &&[f, s] : temp)t+=s;
+                res = std::max(res, t);
+            }
+        }
+        return res;
+    }
+    int largetIsland_fuck(std::vector<std::vector<int>> &grid){
+        struct _node{
+            int nodes = 0;
+            std::unordered_map<int, int> points;
+        };
+        int m = grid.size();
+        int n = grid[0].size();
+        std::vector<std::vector<int>> _fun = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        std::vector<_node> mp;
+        std::function<void(int i, int j, _node&)> _dfs = [&](int i, int j, _node &node){
+            grid[i][j] = 0;
+            int flag   = 0;
+            for(auto &f : _fun){
+                int i1 = i + f[0];
+                int j1 = j + f[1];
+                if(i1>=m || j1>=n || i1<0 || j1<0 || !grid[i1][j1]){
+                 flag = 1;
+                 continue;
+                }
+                _dfs(i1, j1, node);
+            }
+            ++node.nodes;
+            if(flag)node.points.insert({i, j});
+        };
+        for(int i=0; i<m; ++i){
+            for(int j=0; j<n; ++j){
+                if(grid[i][j]){
+                    _node node;
+                    _dfs(i, j, node);
+                    mp.push_back(node);
+                }
+            }
+        }
+        if(!mp.size())return 1;
+        if(mp.size()==1)return std::min(mp[0].nodes + 1, n*m);
+        std::sort(mp.begin(), mp.end(), [&](auto&a, auto&b){
+                return a.nodes > b.nodes; });
+        int res = 0;
+        for(int i=0; i<mp.size(); ++i){
+            for(auto &&[i1, j1] : mp[i].points){
+                for(auto &f : _fun){
+                    int i11 = i1 + f[0];
+                    int j11 = j1 + f[1];
+                    for(int j=i+1; j<mp.size(); ++j){
+                        for(auto &&[i2, j2] : mp[j].points){
+                            for(auto &f : _fun){
+                                int i22 = i2 + f[0];
+                                int j22 = j2 + f[1];
+                                if(i11==i22 && j11==j22){
+                                    return 1 + mp[i].nodes + mp[j].nodes;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return mp[0].nodes + 1;
+    }
+//488. 祖玛游戏
+    int findMinStep(std::string board, std::string hand){
+        int res = INT_MAX>>1;
+        int hs  = hand.size();
+        std::vector<int> mp(26);
+        for(auto &h : hand)++mp[h-'A'];
+        std::function<void(std::string&)> _calc = [&](std::string& b){
+            for(int i=0; i<(int)b.size()-2;){
+                int j = i + 1;
+                while(j<b.size() && b[i]==b[j])++j;
+                if(j-i < 3){
+                    i = j;
+                    continue;
+                }
+                b.erase(i, j-i);
+                _calc(b);
+                return;
+            }
+        };
+        std::function<void(std::string, int)> _dfs = [&](std::string s, int step){
+            if(step>res || step>hs)return;
+            _calc(s);
+            if(s.empty()){
+                res = std::min(res, step);
+                return;
+            }
+            std::set<std::pair<int, char>> hp;
+            for(int i=0; i<s.size(); ++i){
+                int nc = s[i] - 'A';
+                if(!i || s[i] != s[i-1]){
+                    if(mp[nc])hp.insert({i, 'A'+nc});
+                }else if(i && s[i]==s[i-1]){
+                    for(int j=0; j<mp.size(); ++j){
+                        if(j==nc || !mp[j])continue;
+                        hp.insert({i, 'A'+j});
+                    }
+                }
+            }
+            for(auto &&[i, c] : hp){
+                --mp[c-'A'];
+                s.insert(i, 1, c);
+                _dfs(s, step+1);
+                s.erase(i, 1);
+                ++mp[c-'A'];
+            }
+        };
+        _dfs(board, 0);
+        return res>hand.size()?-1:res;
+    }
+//
+    vector<int> numsSameConsecDiff(int n, int k) {
+            std::vector<int> res;
+            if(n==1){
+                res.resize(10);
+                std::iota(res.begin(), res.end(), 0);
+                return res;
+            }
+            std::function<void(std::string&)> _dfs = [&](std::string& s){
+                if(s.length()==n){
+                    res.push_back(std::stoi(s));
+                    return ;
+                }
+                int m = s.back() - '0';
+                int l = m - k;
+                int r = m + k;
+                if(l>=0)s.push_back(l+'0'),_dfs(s),s.pop_back();
+                if(r<=9)s.push_back(r+'0'),_dfs(s),s.pop_back();
+            };
+
+            for(int i=1; i<10; ++i){
+                std::string s;
+                s.push_back(i+'0');
+                _dfs(s);
+            }
+            return res;
+    }
 //947. 移除最多的同行或同列石头
     int removeStones(vector<vector<int>>& stones) {
             int m = stones.size();
@@ -218,7 +673,7 @@ public:
             return _dfs(root, INT_MIN);
     }
 //733. 图像渲染
-    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int newColor) {
+    vector<vector<int>> floodFill_I(vector<vector<int>>& image, int sr, int sc, int newColor) {
             int oldColor = image[sr][sc];
             if(newColor==oldColor)return image;
             int m        = image.size();
@@ -715,7 +1170,7 @@ public:
             return false;
     }
 //116. 填充每个节点的下一个右侧节点指针
-    Node* connect(Node* root) {
+    Node* ionnect(Node* root) {
             if(!root)return {};
             std::queue<Node*> q;
             q.push(root);

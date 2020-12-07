@@ -1984,7 +1984,7 @@ std::cout<<"________________________"<<std::endl;
         for(int i=0; i<=size_1; ++i){
             for(int j=0; j<=size_2; ++j){
                 if(i>0)dp[j] &= (s3[i+j-1] == s1[i-1]);
-                if(j>0)dp[j] |= (dp[j-1]  && s3[i+j-1] == s1[j-1]);
+                if(j>0)dp[j] |= (dp[j-1]  && s3[i+j-1] == s2[j-1]);
             }
         }
         return dp[size_2];
@@ -2003,6 +2003,36 @@ std::cout<<"________________________"<<std::endl;
         return (dp_101 + dp_012) % MOD;
     }
 //741. 摘樱桃
+    int cherryPickUp_11_13(std::vector<std::vector<int>>& grid){
+        int size = grid.size();
+        std::vector<std::vector<std::vector<int>>>
+            dp (size, std::vector<std::vector<int>>(size, std::vector<int>(size, INT_MIN)));
+        for(int i=0; i<size; ++i){
+            for(int j=0; j<size; ++j){
+                for(int i1=0; i1<size; ++i1){
+                    int j1 = (i + j) - i1;
+                    if(j1<0 || j1>=size || grid[i][j] == -1 || grid[i1][j1] == -1){
+                        dp[i][j][i1] = INT_MIN;
+                        continue;
+                    }
+                    int ans = dp[i][j][i1];
+                    ans = std::max(i ? dp[i-1][j][i1] : -1, i&&i1 ? dp[i-1][j][i1-1] : -1);
+                    ans = std::max({ans, j ? dp[i][j-1][i1] : -1, j&&i1 ? dp[i][j-1][i1-1] : -1});
+                    if(ans  < 0)continue;
+                    dp[i][j][i1] = ans + grid[i][j] + (i==i1 ? 0 : grid[i1][j1]);
+                }
+            }
+        }
+         //for(int i=0; i<size; ++i){
+            //for(int j=0; j<size; ++j){
+                //for(int i1=0; i1<size; ++i1){
+                    //if(i+j >= i1)
+                        //std::cout<<i<<"   "<<j<<"   "<<i1<<"   "<<dp[i][j][i1]<<std::endl;
+                //}
+            //}
+         //}
+        return std::max(0, dp[size-1][size-1][size-1]);
+    }
     int cherryPickUp(std::vector<std::vector<int>>& grid){
         int size = grid.size();
         int step = (size<<1) - 1;

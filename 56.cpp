@@ -18,6 +18,30 @@ class Solution{
         }
     };
     public:
+        std::vector<std::vector<int>> merge_better(std::vector<std::vector<int>> &nums){
+            struct _node{
+                int val, type;
+                _node(int v, int t) : val(v), type(t) {}
+                bool operator < (const _node &a){
+                    return val == a.val ? type < a.type : val < a.val; }
+            };
+            std::vector<std::vector<int>> res;
+            std::vector<_node> points;
+            for(auto &p : nums){
+                points.emplace_back(p[0], 0);
+                points.emplace_back(p[1], 1);
+            }
+            std::sort(begin(points), end(points));
+            int diff = 0, l = -1;
+            for(auto &node : points){
+                if(l==-1)l = node.val;
+                if(!(diff += node.type ? -1 : 1)){
+                    res.push_back({l, node.val});
+                    l = -1;
+                }
+            }
+            return res;
+        }
         vector<vector<int>> merge(vector<vector<int>>& nums){
             vector<vector<int>> res;
             sort(nums.begin(), nums.end(),cmp());
